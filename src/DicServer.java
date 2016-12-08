@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Scanner;
 
+
 public class DicServer extends JFrame{
 
 }
