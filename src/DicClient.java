@@ -1,4 +1,11 @@
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import java.awt.*;
+import java.awt.event.*;
 
-public class DicClient {
+import javax.swing.JApplet;
+
+public class DicClient extends JApplet{
 
 }
