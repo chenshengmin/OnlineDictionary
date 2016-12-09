@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.awt.*;
-
+import java.lang.*;
 import javax.swing.*;
 
 import org.omg.CORBA.PRIVATE_MEMBER;
@@ -18,13 +18,15 @@ import java.util.Scanner;
 
 public class DicServer extends JFrame{
 	private JTextArea jta=new JTextArea();
-	
+	ServerSocket serverSocket=null;
+
 	public static void main(String args[]){
 		new DicServer();
 	}
 	
 	public DicServer(){
 		setGUI();
+		connectToClient();
 	}
 	
 	//set server gui
@@ -40,9 +42,9 @@ public class DicServer extends JFrame{
 	}
 	
 	//connect to clients
-	public void getConnection(){
+	public void connectToClient(){
 		try{
-			ServerSocket serverSocket=new ServerSocket(8000);
+			serverSocket=new ServerSocket(8000);
 			jta.append("OnlineDictionary Server started at "+new Date()+'\n');
 			
 			int clientNo=1;
@@ -68,21 +70,55 @@ public class DicServer extends JFrame{
 			}
 		}
 		catch(IOException ex){
-			System.err.println(ex);
+			jta.append(ex.toString()+'\n');
 		}
 	}
-}
-
-class HandleAClient implements Runnable{
-	private Socket socket;
 	
-	public HandleAClient(Socket socket){
-		this.socket=socket;
-	}
 	
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
+	class HandleAClient implements Runnable{
+		private Socket socket;
 		
+		public HandleAClient(Socket socket){
+			this.socket=socket;
+		}
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			
+			try{
+				ObjectInputStream inputFromClient=new ObjectInputStream(socket.getInputStream());
+				ObjectOutputStream outputToClient=new ObjectOutputStream(socket.getOutputStream());
+			
+				while(true){
+					
+					//Object obj=inputFromClient.readObject();
+					DataInputStream data=new DataInputStream(socket.getInputStream());
+					double x=data.readDouble();
+					jta.append(""+x);
+					jta.append("succeeded!");
+					//jta.append(obj.getWord()+'\n');
+					/*if(obj instanceof WordPreference){
+						Translation translation=translate((WordPreference)obj);
+						outputToClient.writeObject(translation);
+						outputToClient.flush();
+					}*/
+				}
+			}
+			catch(IOException ex){
+				jta.append(ex.toString()+'\n');
+			}
+			/*catch(ClassNotFoundException ex){
+				jta.append(ex.toString()+'\n');
+			}*/
+		}
 	}
+	
+	
+	/*public Translation translate(WordPreference word){
+		Translation translation=null;
+		translation=new Translation("fucker");
+		return translation;
+	}*/
+	
 }
