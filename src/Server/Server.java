@@ -6,6 +6,7 @@ import java.util.*;
 import java.awt.*;
 import javax.swing.*;
 import Status.*;
+import Database.*;
 
 public class Server extends JFrame{
 	private JTextArea jta=new JTextArea();
