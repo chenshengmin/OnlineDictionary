@@ -9,8 +9,7 @@ import java.util.Scanner;
 
 public class ClientData {
 	
-	
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
         Connection conn = null;
         String sql;
         // MySQL的JDBC URL编写方式：jdbc:mysql://主机名称：连接端口/数据库的名称?参数=值
@@ -56,5 +55,7 @@ public class ClientData {
         } finally {
             conn.close();
         }
-    }
+    }*/
+	
+	
 }

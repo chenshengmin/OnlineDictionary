@@ -13,8 +13,9 @@ public class Client extends JFrame{
 	private JTextArea jta=new JTextArea();
 	private JButton jbt=new JButton("view");
 	
-	private ObjectOutputStream objtoServer;
-	private ObjectInputStream objfromServer;
+	Socket socket=null;
+	private ObjectOutputStream objtoServer=null;
+	private ObjectInputStream objfromServer=null;
 	
 	
 	public static void main(String args[]){
@@ -22,10 +23,10 @@ public class Client extends JFrame{
 	}
 	
 	public Client(){
-		new LogIn();
+		connectToServer();
+		new LogIn(this,socket);
 		initGui();
 		registerListener();
-		connectToServer();
 	}
 	
 	public void initGui(){
@@ -33,7 +34,7 @@ public class Client extends JFrame{
 		
 		p.setLayout(new BorderLayout());
 		
-		p.add(new JLabel("Enter radius"),BorderLayout.WEST);
+		p.add(new JLabel("Search word"),BorderLayout.WEST);
 		p.add(jtf,BorderLayout.CENTER);
 		jtf.setHorizontalAlignment(JTextField.LEFT);
 		p.add(jbt,BorderLayout.EAST);
@@ -42,8 +43,11 @@ public class Client extends JFrame{
 		add(p,BorderLayout.NORTH);
 		add(new JScrollPane(jta),BorderLayout.CENTER);
 		
+		//将窗口置于屏幕中央
+		setLocationRelativeTo(null); 
+		
 		setTitle("Client");
-		setSize(500,300);
+		setSize(800,600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(false);
 	}
@@ -54,7 +58,7 @@ public class Client extends JFrame{
 	
 	public void connectToServer(){
 		try{
-			Socket socket=new Socket("localhost",8000);
+			socket=new Socket("localhost",8000);
 			
 			objfromServer=new ObjectInputStream(socket.getInputStream());
 			
@@ -82,60 +86,6 @@ public class Client extends JFrame{
 		}
 	}
 	
-	
-	class LogIn extends JFrame{
-		private JTextField jtfNameField=new JTextField();
-		private JTextField jtfPassWordField=new JTextField();
-		private JButton jbtLogInButton=new JButton("Log in");
-		
-		public LogIn(){
-			setLogInGui();
-			registerlogInListener();
-		}
-		
-		public void setLogInGui(){
-			JPanel p1=new JPanel();
-			p1.setLayout(new BorderLayout());
-			p1.add(new JLabel("Enter Your Name"),BorderLayout.WEST);
-			p1.add(jtfNameField,BorderLayout.CENTER);
-			
-			JPanel p2=new JPanel();
-			p2.setLayout(new BorderLayout());
-			p2.add(new JLabel("Enter Your Password"),BorderLayout.WEST);
-			p2.add(jtfPassWordField,BorderLayout.CENTER);
-			
-			JPanel p3=new JPanel();
-			p3.setLayout(new BorderLayout());
-			p3.add(p1,BorderLayout.NORTH);
-			p3.add(p2,BorderLayout.SOUTH);
-			
-			setLayout(new BorderLayout());
-			setTitle("Log In");
-			setSize(240,180);
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setVisible(true);
-			
-			add(p3,BorderLayout.CENTER);
-			add(jbtLogInButton,BorderLayout.SOUTH);
-		}
-		
-		public void registerlogInListener(){
-			jbtLogInButton.addActionListener(new LogInListener());
-		}
-		
-		private class LogInListener implements ActionListener{
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				setVisible(false);
-				Client.this.setVisible(true);
-			}
-			
-		}
-
-	
-	}
 	
 }
 
