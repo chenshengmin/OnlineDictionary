@@ -58,7 +58,7 @@ public class Server extends JFrame{
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			try{
+			/*try{
 				
 				ObjectOutputStream objtoClient=new ObjectOutputStream(socket.getOutputStream());
 				ObjectInputStream objfromClient=new ObjectInputStream(socket.getInputStream());;
@@ -76,7 +76,7 @@ public class Server extends JFrame{
 			}
 			catch(ClassNotFoundException ex){
 				System.err.println(ex);
-			}
+			}*/
 		}
 	}
 	
