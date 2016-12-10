@@ -88,14 +88,14 @@ public class Client extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			/*try{	
-				WordAndPerfection word=new WordAndPerfection(jtf.getText());
-				objtoServer.writeObject(word);
+			try{	
+				SignupMessage sm=new SignupMessage("nima", "000");
+				objtoServer.writeObject(sm);
 				objtoServer.flush();
 			}
 			catch(IOException ex){
 				System.err.println(ex);
-			}*/
+			}
 		}
 	}	
 }

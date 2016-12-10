@@ -12,6 +12,7 @@ import Database.*;
 
 public class Server extends JFrame{
 	private JTextArea jta=new JTextArea();
+	Set<Socket> socketSet=new HashSet<Socket>();
 	
 	public static void main(String[] args){
 		new Server();
@@ -41,6 +42,7 @@ public class Server extends JFrame{
 				Socket socket=serverSocket.accept();
 				HandleClient task=new HandleClient(socket);
 				new Thread(task).start();
+				socketSet.add(socket);
 			}
 		}
 		catch(IOException ex){
@@ -52,6 +54,7 @@ public class Server extends JFrame{
 	
 	class HandleClient implements Runnable{
 		Socket socket;
+		String clientName;
 		
 		public HandleClient(Socket socket){
 			this.socket=socket;
@@ -60,26 +63,47 @@ public class Server extends JFrame{
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			/*try{
+			try{
 				
 				ObjectOutputStream objtoClient=new ObjectOutputStream(socket.getOutputStream());
 				ObjectInputStream objfromClient=new ObjectInputStream(socket.getInputStream());;
-					
+				
+				//循环接收来自客户端的消息
 				while(true){
-					Object obj=objfromClient.readObject();
+					if(socket.isClosed())
+						break;
 					
-					if(obj instanceof WordAndPerfection){
-						jta.append(((WordAndPerfection)obj).getWord()+'\n');
-					}
+					Object obj=objfromClient.readObject();
+					//判断接收到的消息类型并进行处理
+					if(obj instanceof SignupMessage){
+						jta.append("yes");
+					}//是否是注册消息
+					else if(obj instanceof LoginMessage){
+						
+					}//是否是登录消息
+					else if(obj instanceof WordSearchMessage){
+							
+					}//是否是搜索单词消息
+					else if(obj instanceof LikeUpdateMessage){
+							
+					}//是否是点赞消息
 				}
+	
 			}
 			catch(IOException ex){
 				System.err.println(ex);
 			}
 			catch(ClassNotFoundException ex){
 				System.err.println(ex);
-			}*/
+			}
+			afterClosedOperate();
+		}
+		
+		public void afterClosedOperate(){
+			
 		}
 	}
+	
+	
 	
 }
