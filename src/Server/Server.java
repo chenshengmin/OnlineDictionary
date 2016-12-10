@@ -4,8 +4,10 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.awt.*;
+
 import javax.swing.*;
-import Status.*;
+
+import Message.*;
 import Database.*;
 
 public class Server extends JFrame{

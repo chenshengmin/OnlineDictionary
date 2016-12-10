@@ -7,7 +7,7 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import Status.*;
+import Message.*;
 
 public class Client extends JFrame{
 	private JTextField jtf=new JTextField();
