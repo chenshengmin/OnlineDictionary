@@ -19,15 +19,3 @@ public class LoginMessage implements Serializable{
 		return password;
 	}
 }
-
-class AnswerLoginMessage implements Serializable{
-	private boolean isSuccessful;
-	
-	public AnswerLoginMessage(boolean isSuccessful){
-		this.isSuccessful=isSuccessful;
-	}
-	
-	public boolean getIsSuccessful(){
-		return isSuccessful;
-	}
-}

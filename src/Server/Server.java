@@ -12,7 +12,7 @@ import Database.*;
 
 public class Server extends JFrame{
 	private JTextArea jta=new JTextArea();
-	Set<Socket> socketSet=new HashSet<Socket>();
+	Set<Socket> socketSet=Collections.synchronizedSet(new HashSet<Socket>());
 	
 	public static void main(String[] args){
 		new Server();
@@ -55,9 +55,11 @@ public class Server extends JFrame{
 	class HandleClient implements Runnable{
 		Socket socket;
 		String clientName;
+		ClientData clientData;
 		
 		public HandleClient(Socket socket){
 			this.socket=socket;
+			clientData=new ClientData(socket);
 		}
 
 		@Override
@@ -76,10 +78,17 @@ public class Server extends JFrame{
 					Object obj=objfromClient.readObject();
 					//判断接收到的消息类型并进行处理
 					if(obj instanceof SignupMessage){
-						jta.append("yes");
+						AnswerSignupMessage asm=clientData.HandleSignupMessage((SignupMessage)obj);
+						objtoClient.writeObject(asm);
+						objtoClient.flush();
 					}//是否是注册消息
 					else if(obj instanceof LoginMessage){
-						
+						AnswerLoginMessage alm=clientData.HandleLoginMessage((LoginMessage)obj);
+						if(alm.getDoseNameExist()&&alm.getIsPasswordRight()){
+							clientName=((LoginMessage)obj).getName();
+						}
+						objtoClient.writeObject(alm);
+						objtoClient.flush();
 					}//是否是登录消息
 					else if(obj instanceof WordSearchMessage){
 							

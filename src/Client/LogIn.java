@@ -3,27 +3,39 @@ package Client;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import Message.*;
 
 
 public class LogIn extends JFrame{
 	private Client client;
 	private Socket socket;
+	private ObjectOutputStream objtoServer=null;
+	private ObjectInputStream objfromServer=null;
 	
 	private JTextField jtfNameField=new JTextField();
 	private JTextField jtfPassWordField=new JTextField();
 	private JButton jbtLogInButton=new JButton("Log in");
 	private JButton jbtSignUpButton=new JButton("Sign up");
 	
-	public LogIn(Client client,Socket socket){
+	public LogIn(Client client,Socket socket,ObjectInputStream objfromServer,ObjectOutputStream objtoServer){
 		this.client=client;
 		this.socket=socket;
+		this.objfromServer=objfromServer;
+		this.objtoServer=objtoServer;
+		
+
 		setLogInGui();
 		registerlogInListener();
 	}
@@ -67,8 +79,37 @@ public class LogIn extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			setVisible(false);
-			client.setVisible(true);
+			String name=jtfNameField.getText();
+			String password=jtfPassWordField.getText();
+			if(name==null||password==null||name.equals("")||password.equals("")){
+				JOptionPane.showMessageDialog(null, "alert", "请勿输入空值", JOptionPane.ERROR_MESSAGE); 
+			}
+			else{
+				//
+				try {
+					LoginMessage lgnm=new LoginMessage(name, password);
+					objtoServer.writeObject(lgnm);
+					objtoServer.flush();
+					
+					AnswerLoginMessage alm=(AnswerLoginMessage)objfromServer.readObject();
+					
+					if(alm.getDoseNameExist()){
+						JOptionPane.showMessageDialog(null, "不存在该用户", "警告",JOptionPane.ERROR_MESSAGE); 
+					}
+					else if(alm.getIsPasswordRight()){
+						JOptionPane.showMessageDialog(null, "密码错误", "警告",JOptionPane.ERROR_MESSAGE);
+					}
+					else{
+						setVisible(false);
+						client.setVisible(true);
+					}
+				} catch (IOException ex) {
+					// TODO: handle exception
+					System.err.println(ex);
+				} catch(ClassNotFoundException ex){
+					System.err.println(ex);
+				}
+			}
 		}
 		
 	}
@@ -78,7 +119,7 @@ public class LogIn extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			new SignUp(socket);
+			new SignUp(socket,objfromServer,objtoServer);
 		}
 		
 	}

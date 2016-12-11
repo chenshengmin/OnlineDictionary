@@ -19,15 +19,3 @@ public class SignupMessage implements Serializable{
 		return password;
 	}
 }
-
-class AnswerSignupMessage implements Serializable{
-	private boolean nameExists;
-	
-	public AnswerSignupMessage(boolean nameExists){
-		this.nameExists=nameExists;
-	}
-	
-	public boolean getNameExists(){
-		return nameExists;
-	}
-}
