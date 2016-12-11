@@ -93,10 +93,10 @@ public class LogIn extends JFrame{
 					
 					AnswerLoginMessage alm=(AnswerLoginMessage)objfromServer.readObject();
 					
-					if(alm.getDoseNameExist()){
+					if(!alm.getDoseNameExist()){
 						JOptionPane.showMessageDialog(null, "不存在该用户", "警告",JOptionPane.ERROR_MESSAGE); 
 					}
-					else if(alm.getIsPasswordRight()){
+					else if(!alm.getIsPasswordRight()){
 						JOptionPane.showMessageDialog(null, "密码错误", "警告",JOptionPane.ERROR_MESSAGE);
 					}
 					else{

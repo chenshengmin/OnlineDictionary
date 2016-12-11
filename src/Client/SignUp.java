@@ -99,8 +99,9 @@ public class SignUp extends JFrame{
 				}
 
 			}
-
 		}
 		
 	}
+	
+	
 }

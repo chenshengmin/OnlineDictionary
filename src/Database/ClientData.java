@@ -82,7 +82,7 @@ public class ClientData {
 		}
 	}
 	
-	public AnswerSignupMessage HandleSignupMessage(SignupMessage signup){
+	public AnswerSignupMessage handleSignupMessage(SignupMessage signup){
 		try{
 			String sql="select * from onlinedictionaryclient where NAME = '" + signup.getName() + "'";
 			ResultSet rs=statement.executeQuery(sql);
@@ -105,17 +105,22 @@ public class ClientData {
 		return new AnswerSignupMessage(true);
 	}
 	
-	public AnswerLoginMessage HandleLoginMessage(LoginMessage login){
+	public AnswerLoginMessage handleLoginMessage(LoginMessage login){
 		try{
-			String sql="select password from onlinedictionaryclient where NAME = '" + login.getName() + "'";
+			String sql="select password from onlinedictionaryclient where NAME = '" + login.getName() + "';";
 			ResultSet rs=statement.executeQuery(sql);
 			if(rs.next()){			
 				if(rs.getString(1).equals(login.getPassword())){
-					sql="update onlinedictionary set isonline=true;";
+					//更改登录用户的登录信息，主机名和主机地址
+					sql="update onlinedictionaryclient set isonline=true where NAME = '"+login.getName() + "';";
 					statement.executeUpdate(sql);
-					sql="update onlinedictionary set hostname='"+socket.getInetAddress().getHostName()+"';";
+					
+					sql="update onlinedictionaryclient set hostname='"+socket.getInetAddress().getHostName()
+							+"' where NAME = '"+login.getName() + "';";
 					statement.executeUpdate(sql);
-					sql="update onlinedictionary set hostaddress='"+socket.getInetAddress().getHostAddress()+"';";
+					
+					sql="update onlinedictionaryclient set hostaddress='"+socket.getInetAddress().getHostAddress()
+							+"' where NAME = '"+login.getName() + "';";
 					statement.executeUpdate(sql);
 					return new AnswerLoginMessage(true, true);
 				}
@@ -133,5 +138,34 @@ public class ClientData {
 		return new AnswerLoginMessage(false, false);
 	}
 	
+	public void handleLikeUpdateMessage(String clientName,LikeUpdateMessage likeUpdate){
+		try{
+			if(likeUpdate.getDicName().equals("baidu")){
+				String sql="update onlinedictionaryclient set baiduprefer=baiduprefer+("+likeUpdate.getUpdate()+") where NAME = '"+ clientName + "';";
+				statement.executeUpdate(sql);
+			}
+			else if(likeUpdate.getDicName().equals("youdao")){
+				String sql="update onlinedictionaryclient set youdaoprefer=youdaoprefer+("+likeUpdate.getUpdate()+") where NAME = '"+ clientName + "';";
+				statement.executeUpdate(sql);
+			}
+			else if(likeUpdate.getDicName().equals("bing")){
+				String sql="update onlinedictionaryclient set bingprefer=bingprefer+("+likeUpdate.getUpdate()+") where NAME = '"+ clientName + "';";
+				statement.executeUpdate(sql);
+			}
+		}
+		catch(SQLException ex){
+			System.err.println(ex);
+		}
+	}
+	
+	public void handleClientShutDown(String clientName){
+		try{
+			String sql="update onlinedictionaryclient set isonline=false where NAME = '"+ clientName + "';";
+			statement.executeUpdate(sql);
+		}
+		catch(SQLException ex){
+			System.err.println(ex);
+		}
+	}
 	
 }

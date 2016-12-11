@@ -78,12 +78,12 @@ public class Server extends JFrame{
 					Object obj=objfromClient.readObject();
 					//判断接收到的消息类型并进行处理
 					if(obj instanceof SignupMessage){
-						AnswerSignupMessage asm=clientData.HandleSignupMessage((SignupMessage)obj);
+						AnswerSignupMessage asm=clientData.handleSignupMessage((SignupMessage)obj);
 						objtoClient.writeObject(asm);
 						objtoClient.flush();
 					}//是否是注册消息
 					else if(obj instanceof LoginMessage){
-						AnswerLoginMessage alm=clientData.HandleLoginMessage((LoginMessage)obj);
+						AnswerLoginMessage alm=clientData.handleLoginMessage((LoginMessage)obj);
 						if(alm.getDoseNameExist()&&alm.getIsPasswordRight()){
 							clientName=((LoginMessage)obj).getName();
 						}
@@ -94,7 +94,7 @@ public class Server extends JFrame{
 							
 					}//是否是搜索单词消息
 					else if(obj instanceof LikeUpdateMessage){
-							
+						clientData.handleLikeUpdateMessage(clientName, (LikeUpdateMessage)obj);
 					}//是否是点赞消息
 				}
 	
@@ -105,12 +105,9 @@ public class Server extends JFrame{
 			catch(ClassNotFoundException ex){
 				System.err.println(ex);
 			}
-			afterClosedOperate();
+			clientData.handleClientShutDown(clientName);
 		}
-		
-		public void afterClosedOperate(){
-			
-		}
+	
 	}
 	
 	

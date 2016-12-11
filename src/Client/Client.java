@@ -50,9 +50,9 @@ public class Client extends JFrame{
 		
 		JPanel p2=new JPanel();
 		p2.setLayout(new BoxLayout(p2,BoxLayout.Y_AXIS));
-		p2.add(new Like(socket));
-		p2.add(new Like(socket));
-		p2.add(new Like(socket));
+		p2.add(new Like());
+		p2.add(new Like());
+		p2.add(new Like());
 		
 		setLayout(new BorderLayout());
 		add(p,BorderLayout.NORTH);
@@ -90,37 +90,58 @@ public class Client extends JFrame{
 			// TODO Auto-generated method stub
 			
 		}
-	}	
-}
-
-class Like extends JPanel{
-	Socket socket=null;
-	
-	JCheckBox jcbLikeBox=new JCheckBox("µãÔÞ");
-	JTextArea jtaTrans=new JTextArea();
-	
-	public Like(Socket socket){
-		this.socket=socket;
-		setLikeGui();
-		registerLikeListener();
 	}
 	
-	public void setLikeGui(){
-		setLayout(new BorderLayout());
-		add(jcbLikeBox,BorderLayout.EAST);
-		add(new JScrollPane(jtaTrans),BorderLayout.CENTER);
-	}
-	
-	public void registerLikeListener(){
-		jcbLikeBox.addActionListener(new LikeChoosingListener());
-	}
-	
-	private class LikeChoosingListener implements ActionListener{
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// TODO Auto-generated method stub
-			
+	class Like extends JPanel{
+		String labelString="baidu";
+		JCheckBox jcbLikeBox=new JCheckBox("µãÔÞ");
+		JTextArea jtaTrans=new JTextArea();
+		
+		public Like(){
+			setLikeGui();
+			registerLikeListener();
 		}
-	}	
+		
+		public void setLikeGui(){
+			setLayout(new BorderLayout());
+			add(jcbLikeBox,BorderLayout.EAST);
+			add(new JLabel(),BorderLayout.WEST);
+			add(new JScrollPane(jtaTrans),BorderLayout.CENTER);
+		}
+		
+		public void registerLikeListener(){
+			jcbLikeBox.addActionListener(new LikeChoosingListener());
+		}
+		
+		private class LikeChoosingListener implements ActionListener{
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(labelString==null){
+					return;
+				}
+				else if(jcbLikeBox.isSelected()){
+					try{
+						LikeUpdateMessage lum=new LikeUpdateMessage(labelString, 1);
+						objtoServer.writeObject(lum);
+						objtoServer.flush();
+					}
+					catch(IOException ex){
+						System.err.println(ex);
+					}
+				}
+				else{
+					try{
+						LikeUpdateMessage lum=new LikeUpdateMessage(labelString, -1);
+						objtoServer.writeObject(lum);
+						objtoServer.flush();
+					}
+					catch(IOException ex){
+						System.err.println(ex);
+					}
+				}
+			}
+		}
+	}
 }
