@@ -12,6 +12,7 @@ import Message.*;
 public class Client extends JFrame{
 	private JTextField jtf=new JTextField();
 	private JButton jbt=new JButton("translate");
+	private JButton jbtCheckClients=new JButton("查看其他用户在线状态");
 	
 	private JCheckBox jcbYoudao=new JCheckBox("有道");
 	private JCheckBox jcbBaidu=new JCheckBox("百度");
@@ -63,6 +64,7 @@ public class Client extends JFrame{
 		setLayout(new BorderLayout());
 		add(p,BorderLayout.NORTH);
 		add(p2,BorderLayout.CENTER);
+		add(jbtCheckClients,BorderLayout.SOUTH);
 		//将窗口置于屏幕中央
 		setLocationRelativeTo(null);
 		setTitle("Client");
@@ -73,6 +75,7 @@ public class Client extends JFrame{
 	
 	public void registerListener(){
 		jbt.addActionListener(new WordSearchListener());
+		jbtCheckClients.addActionListener(new CheckClientsListener());
 	}
 	
 	public void connectToServer(){
@@ -163,6 +166,16 @@ public class Client extends JFrame{
 		}
 	}
 	
+	private class CheckClientsListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			new CheckClients(socket,objfromServer,objtoServer);
+		}
+		
+	}
+	
 	class Like extends JPanel{
 		String labelString=null;
 		JTextField jtfDic=new JTextField("Dictionary");
@@ -177,6 +190,7 @@ public class Client extends JFrame{
 		public void setLikeGui(){
 			setLayout(new BorderLayout(10,10));
 			jtfDic.setEditable(false);
+			jtaTrans.setEditable(false);
 			add(jcbLike,BorderLayout.EAST);
 			add(jtfDic,BorderLayout.WEST);
 			add(new JScrollPane(jtaTrans),BorderLayout.CENTER);

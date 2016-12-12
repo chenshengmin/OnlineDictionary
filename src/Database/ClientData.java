@@ -270,6 +270,40 @@ public class ClientData {
 		return dicPriority;
 	}
 	
+	public AnswerCheckClientsMessage handleCheckClientsMessage(String clientName,CheckClientsMessage ccm){
+		ArrayList<String> onlineClientsList=new ArrayList<String>();
+		ArrayList<String> offlineClientsList=new ArrayList<String>();
+		
+		try{
+			String sql="select NAME from onlinedictionaryclient where isonline = true;";
+			ResultSet rs=statement.executeQuery(sql);
+			while(rs.next()){
+				String name=rs.getString(1);
+				if(!name.equals(clientName)){
+					onlineClientsList.add(name);
+				}
+			}
+		}
+		catch(SQLException ex){
+			System.err.println(ex);
+		}
+		
+		try{
+			String sql="select NAME from onlinedictionaryclient where isonline = false;";
+			ResultSet rs=statement.executeQuery(sql);
+			while(rs.next()){			
+				offlineClientsList.add(rs.getString(1));
+			}
+		}
+		catch(SQLException ex){
+			System.err.println(ex);
+		}
+		
+		AnswerCheckClientsMessage accm=new AnswerCheckClientsMessage(onlineClientsList, offlineClientsList);
+		
+		return accm;
+	}
+	
 	public void handleClientShutDown(String clientName){
 		try{
 			String sql="update onlinedictionaryclient set isonline=false where NAME = '"+ clientName + "';";

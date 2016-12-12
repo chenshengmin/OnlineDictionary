@@ -87,6 +87,7 @@ public class Server extends JFrame{
 						AnswerLoginMessage alm=clientData.handleLoginMessage((LoginMessage)obj);
 						if(alm.getDoseNameExist()&&alm.getIsPasswordRight()){
 							clientName=((LoginMessage)obj).getName();
+							jta.append("User "+clientName+" logged in."+"\n");
 						}
 						objtoClient.writeObject(alm);
 						objtoClient.flush();
@@ -129,6 +130,11 @@ public class Server extends JFrame{
 					else if(obj instanceof LikeUpdateMessage){
 						clientData.handleLikeUpdateMessage(clientName, (LikeUpdateMessage)obj);
 					}//是否是点赞消息
+					else if(obj instanceof CheckClientsMessage){
+						AnswerCheckClientsMessage accm=clientData.handleCheckClientsMessage(clientName,(CheckClientsMessage)obj);
+						objtoClient.writeObject(accm);
+						objtoClient.flush();
+					}//查询用户在线情况消息
 				}
 	
 			}
@@ -139,6 +145,7 @@ public class Server extends JFrame{
 				System.err.println(ex);
 			}
 			clientData.handleClientShutDown(clientName);
+			jta.append("User "+clientName+" logged out."+"\n");
 		}
 	
 	}
