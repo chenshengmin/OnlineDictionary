@@ -9,6 +9,7 @@ import javax.swing.*;
 
 import Message.*;
 import Database.*;
+import Web.*;
 
 public class Server extends JFrame{
 	private JTextArea jta=new JTextArea();
@@ -91,7 +92,39 @@ public class Server extends JFrame{
 						objtoClient.flush();
 					}//是否是登录消息
 					else if(obj instanceof WordSearchMessage){
-							
+						String[] translation=new String[3];
+						for(int i=0;i<3;i++)
+							translation[i]="";
+						boolean[] wordExists=new boolean[3];
+						for(int i=0;i<3;i++)
+							wordExists[i]=false;
+						AnswerWordSearchMessage awsm=null;
+						String[] dicPriority=clientData.handleWordSearchMessage(clientName, (WordSearchMessage)obj);
+						
+						for(int i=0;i<3;i++){
+							if(dicPriority[i].equals("Baidu")){
+								translation[i]=Baidu.lookUp(((WordSearchMessage)obj).getWord());
+								if(!(translation[i]==null||translation[i].equals("")))
+									wordExists[i]=true;
+							}
+							else if(dicPriority[i].equals("Youdao")){
+								translation[i]=Youdao.lookUp(((WordSearchMessage)obj).getWord());
+								if(!(translation[i]==null||translation[i].equals("")))
+									wordExists[i]=true;
+							}
+							else if(dicPriority[i].equals("Bing")){
+								translation[i]=Bing.lookUp(((WordSearchMessage)obj).getWord());
+								if(!(translation[i]==null||translation[i].equals("")))
+									wordExists[i]=true;
+							}
+							else if(dicPriority[i].equals("")){
+								translation[i]="";
+							}
+						}
+						
+						awsm=new AnswerWordSearchMessage(wordExists[0]||wordExists[1]||wordExists[2], dicPriority, translation);
+						objtoClient.writeObject(awsm);
+						objtoClient.flush();
 					}//是否是搜索单词消息
 					else if(obj instanceof LikeUpdateMessage){
 						clientData.handleLikeUpdateMessage(clientName, (LikeUpdateMessage)obj);

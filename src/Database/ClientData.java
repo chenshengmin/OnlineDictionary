@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Scanner;
+import java.util.*;
 
 import Message.*;
 
@@ -140,15 +140,15 @@ public class ClientData {
 	
 	public void handleLikeUpdateMessage(String clientName,LikeUpdateMessage likeUpdate){
 		try{
-			if(likeUpdate.getDicName().equals("baidu")){
+			if(likeUpdate.getDicName().equals("Baidu")){
 				String sql="update onlinedictionaryclient set baiduprefer=baiduprefer+("+likeUpdate.getUpdate()+") where NAME = '"+ clientName + "';";
 				statement.executeUpdate(sql);
 			}
-			else if(likeUpdate.getDicName().equals("youdao")){
+			else if(likeUpdate.getDicName().equals("Youdao")){
 				String sql="update onlinedictionaryclient set youdaoprefer=youdaoprefer+("+likeUpdate.getUpdate()+") where NAME = '"+ clientName + "';";
 				statement.executeUpdate(sql);
 			}
-			else if(likeUpdate.getDicName().equals("bing")){
+			else if(likeUpdate.getDicName().equals("Bing")){
 				String sql="update onlinedictionaryclient set bingprefer=bingprefer+("+likeUpdate.getUpdate()+") where NAME = '"+ clientName + "';";
 				statement.executeUpdate(sql);
 			}
@@ -156,6 +156,118 @@ public class ClientData {
 		catch(SQLException ex){
 			System.err.println(ex);
 		}
+	}
+	
+	public String[] handleWordSearchMessage(String clientName,WordSearchMessage wsm){
+		String[] dicPriority=new String[3];
+		for(int i=0;i<3;i++){
+			dicPriority[i]="";
+		}
+		
+		int baiduPrefer=-1;
+		int youdaoPrefer=-1;
+		int bingPrefer=-1;
+		
+		try{
+			if(wsm.getBaidu()){
+				String sql="select baiduprefer from onlinedictionaryclient where NAME = '" + clientName + "';";
+				ResultSet rs=statement.executeQuery(sql);
+				if(rs.next())
+					baiduPrefer=rs.getInt(1);
+			}
+			if(wsm.getYoudao()){
+				String sql="select youdaoprefer from onlinedictionaryclient where NAME = '" + clientName + "';";
+				ResultSet rs=statement.executeQuery(sql);
+				if(rs.next())
+					youdaoPrefer=rs.getInt(1);
+			}
+			if(wsm.getBing()){
+				String sql="select bingprefer from onlinedictionaryclient where NAME = '" + clientName + "';";
+				ResultSet rs=statement.executeQuery(sql);
+				if(rs.next())
+					bingPrefer=rs.getInt(1);
+			}
+		}
+		catch(SQLException ex){
+			System.err.println(ex);
+		}
+		
+		if(baiduPrefer>=youdaoPrefer){
+			if(baiduPrefer>=bingPrefer){
+				if(youdaoPrefer>=bingPrefer){
+					if(baiduPrefer!=-1){
+						dicPriority[0]="Baidu";
+					}
+					if(youdaoPrefer!=-1){
+						dicPriority[1]="Youdao";
+					}
+					if(bingPrefer!=-1){
+						dicPriority[2]="Bing";
+					}
+				}
+				else{
+					if(baiduPrefer!=-1){
+						dicPriority[0]="Baidu";
+					}
+					if(youdaoPrefer!=-1){
+						dicPriority[2]="Youdao";
+					}
+					if(bingPrefer!=-1){
+						dicPriority[1]="Bing";
+					}
+				}
+			}
+			else{
+				if(baiduPrefer!=-1){
+					dicPriority[1]="Baidu";
+				}
+				if(youdaoPrefer!=-1){
+					dicPriority[2]="Youdao";
+				}
+				if(bingPrefer!=-1){
+					dicPriority[0]="Bing";
+				}
+			}
+		}
+		else{
+			if(youdaoPrefer>=bingPrefer){
+				if(baiduPrefer>=bingPrefer){
+					if(baiduPrefer!=-1){
+						dicPriority[1]="Baidu";
+					}
+					if(youdaoPrefer!=-1){
+						dicPriority[0]="Youdao";
+					}
+					if(bingPrefer!=-1){
+						dicPriority[2]="Bing";
+					}
+				}
+				else{
+					if(baiduPrefer!=-1){
+						dicPriority[2]="Baidu";
+					}
+					if(youdaoPrefer!=-1){
+						dicPriority[0]="Youdao";
+					}
+					if(bingPrefer!=-1){
+						dicPriority[1]="Bing";
+					}
+				}
+			}
+			else{
+				if(baiduPrefer!=-1){
+					dicPriority[2]="Baidu";
+				}
+				if(youdaoPrefer!=-1){
+					dicPriority[1]="Youdao";
+				}
+				if(bingPrefer!=-1){
+					dicPriority[0]="Bing";
+				}
+			}
+		}
+	
+		return dicPriority;
 	}
 	
 	public void handleClientShutDown(String clientName){

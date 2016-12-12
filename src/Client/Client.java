@@ -17,6 +17,12 @@ public class Client extends JFrame{
 	private JCheckBox jcbBaidu=new JCheckBox("百度");
 	private JCheckBox jcbBing=new JCheckBox("必应");
 	
+	private Like firstLike=new Like();
+	private Like secondLike=new Like();
+	private Like thirdLike=new Like();
+	private boolean likeLock=true;
+	
+	
 	Socket socket=null;
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
@@ -50,9 +56,9 @@ public class Client extends JFrame{
 		
 		JPanel p2=new JPanel();
 		p2.setLayout(new BoxLayout(p2,BoxLayout.Y_AXIS));
-		p2.add(new Like());
-		p2.add(new Like());
-		p2.add(new Like());
+		p2.add(firstLike);
+		p2.add(secondLike);
+		p2.add(thirdLike);
 		
 		setLayout(new BorderLayout());
 		add(p,BorderLayout.NORTH);
@@ -88,13 +94,79 @@ public class Client extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
+			likeLock=true;
 			
+			String toBeTranslated=jtf.getText();
+			//输入为空报错
+			if(toBeTranslated.equals("")){
+				JOptionPane.showMessageDialog(null, "输入不能为空！", "alert", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			//不是英文单词则报错
+			for(int i=0;i<toBeTranslated.length();i++){
+				char c=toBeTranslated.charAt(i);
+				if(!((c>='a'&&c<='z')||(c>='A'&&c<='Z'))){
+					JOptionPane.showMessageDialog(null, "输入非单词！", "alert", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+			}
+			
+			WordSearchMessage wsm=new WordSearchMessage(toBeTranslated);
+			
+			wsm.setBaidu(jcbBaidu.isSelected());
+			wsm.setBing(jcbBing.isSelected());
+			wsm.setYoudao(jcbYoudao.isSelected());
+			if(!jcbBaidu.isSelected()&&!jcbBing.isSelected()&&!jcbYoudao.isSelected()){
+				wsm.setBaidu(true);
+				wsm.setBing(true);
+				wsm.setYoudao(true);
+			}
+			
+			try{
+				objtoServer.writeObject(wsm);
+				objtoServer.flush();
+				
+				AnswerWordSearchMessage awsm=(AnswerWordSearchMessage)objfromServer.readObject();
+				
+				firstLike.refresh("", "");
+				secondLike.refresh("", "");
+				thirdLike.refresh("", "");
+				
+				if(!awsm.getWordExists()){
+					JOptionPane.showMessageDialog(null, "该单词不存在！", "alert", JOptionPane.ERROR_MESSAGE);
+				}
+				else{
+					String[] dicPriority=awsm.getDicPriority();
+					String[] translation=awsm.getTranslation();
+
+					if(!(dicPriority[0]==null||translation[0]==null||dicPriority[0].equals("")||translation[0].equals(""))){
+						firstLike.refresh(dicPriority[0], translation[0]);
+					}
+					
+					if(!(dicPriority[1]==null||translation[1]==null||dicPriority[1].equals("")||translation[1].equals(""))){
+						secondLike.refresh(dicPriority[1], translation[1]);
+					}
+					
+					if(!(dicPriority[2]==null||translation[2]==null||dicPriority[2].equals("")||translation[2].equals(""))){
+						thirdLike.refresh(dicPriority[2], translation[2]);
+					}
+				}
+			}
+			catch(IOException ex){
+				System.err.println(ex);
+			}
+			catch(ClassNotFoundException ex){
+				System.err.println(ex);
+			}
+			
+			likeLock=false;
 		}
 	}
 	
 	class Like extends JPanel{
-		String labelString="baidu";
-		JCheckBox jcbLikeBox=new JCheckBox("点赞");
+		String labelString=null;
+		JTextField jtfDic=new JTextField("Dictionary");
+		JCheckBox jcbLike=new JCheckBox("点赞");
 		JTextArea jtaTrans=new JTextArea();
 		
 		public Like(){
@@ -103,14 +175,15 @@ public class Client extends JFrame{
 		}
 		
 		public void setLikeGui(){
-			setLayout(new BorderLayout());
-			add(jcbLikeBox,BorderLayout.EAST);
-			add(new JLabel(),BorderLayout.WEST);
+			setLayout(new BorderLayout(10,10));
+			jtfDic.setEditable(false);
+			add(jcbLike,BorderLayout.EAST);
+			add(jtfDic,BorderLayout.WEST);
 			add(new JScrollPane(jtaTrans),BorderLayout.CENTER);
 		}
 		
 		public void registerLikeListener(){
-			jcbLikeBox.addActionListener(new LikeChoosingListener());
+			jcbLike.addActionListener(new LikeChoosingListener());
 		}
 		
 		private class LikeChoosingListener implements ActionListener{
@@ -118,30 +191,45 @@ public class Client extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				if(labelString==null){
-					return;
-				}
-				else if(jcbLikeBox.isSelected()){
-					try{
-						LikeUpdateMessage lum=new LikeUpdateMessage(labelString, 1);
-						objtoServer.writeObject(lum);
-						objtoServer.flush();
+				if(!likeLock){
+					if(labelString==null||labelString.equals("")||(!(labelString.equals("Baidu")||labelString.equals("Youdao")||labelString.equals("Bing")))){
+						return;
 					}
-					catch(IOException ex){
-						System.err.println(ex);
+					else if(jcbLike.isSelected()){
+						try{
+							LikeUpdateMessage lum=new LikeUpdateMessage(labelString, 1);
+							objtoServer.writeObject(lum);
+							objtoServer.flush();
+						}
+						catch(IOException ex){
+							System.err.println(ex);
+						}
 					}
-				}
-				else{
-					try{
-						LikeUpdateMessage lum=new LikeUpdateMessage(labelString, -1);
-						objtoServer.writeObject(lum);
-						objtoServer.flush();
-					}
-					catch(IOException ex){
-						System.err.println(ex);
+					else{
+						try{
+							LikeUpdateMessage lum=new LikeUpdateMessage(labelString, -1);
+							objtoServer.writeObject(lum);
+							objtoServer.flush();
+						}
+						catch(IOException ex){
+							System.err.println(ex);
+						}
 					}
 				}
 			}
+		}
+		
+		public void refresh(String dicName,String translation){
+			labelString=dicName;
+			
+			if(!dicName.equals(""))
+				jtfDic.setText(dicName);
+			else
+				jtfDic.setText("Dictionary");
+			
+			jtaTrans.setText(translation);
+			
+			jcbLike.setSelected(false);
 		}
 	}
 }

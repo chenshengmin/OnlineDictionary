@@ -82,7 +82,7 @@ public class LogIn extends JFrame{
 			String name=jtfNameField.getText();
 			String password=jtfPassWordField.getText();
 			if(name==null||password==null||name.equals("")||password.equals("")){
-				JOptionPane.showMessageDialog(null, "alert", "请勿输入空值", JOptionPane.ERROR_MESSAGE); 
+				JOptionPane.showMessageDialog(null, "请勿输入空值", "alert", JOptionPane.ERROR_MESSAGE); 
 			}
 			else{
 				//
