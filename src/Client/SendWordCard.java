@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import javax.swing.*;
 
-import Client.CheckClients.Refresh;
 import Message.*;
 
 public class SendWordCard extends JFrame{
@@ -150,11 +149,16 @@ public class SendWordCard extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			String[] receivers=(String[])jlClients.getSelectedValues();
-			if(receivers.length==0||receivers[0]==null||receivers[0].equals("")){
+			Object[] tempReceivers=jlClients.getSelectedValues();
+			if(tempReceivers.length==0||(String)tempReceivers[0]==null||((String)tempReceivers[0]).equals("")){
 				JOptionPane.showMessageDialog(null, "您尚未选择有效的发送用户", "alert", JOptionPane.ERROR_MESSAGE);
 			}
 			else{
+				String[] receivers=new String[tempReceivers.length];
+				for(int i=0;i<tempReceivers.length;i++){
+					receivers[i]=(String)tempReceivers[i];
+				}
+				
 				try{
 					String tempContent=content;
 					String exp=(String)jlExpressions.getSelectedValue();
@@ -170,7 +174,7 @@ public class SendWordCard extends JFrame{
 					
 					for(int i=0;i<receivers.length;i++){
 						AnswerSendWordCardMessage aswcm=(AnswerSendWordCardMessage)objfromServer.readObject();
-						if(aswcm.getIsClientOnline()==true){
+						if(!aswcm.getIsClientOnline()){
 							JOptionPane.showMessageDialog(null, "o(>﹏<)o不好！"+aswcm.getReceiver()+"居然不在学习，跑去浪了~~", "alert", JOptionPane.ERROR_MESSAGE);
 						}else{
 							JOptionPane.showMessageDialog(null, "发送给"+aswcm.getReceiver()+"成功！O(∩_∩)O~~");
@@ -202,9 +206,7 @@ public class SendWordCard extends JFrame{
 			for(int i=0;i<onlineClientsList.size();i++){
 					dlm.addElement(onlineClientsList.get(i));
 			}
-			jlClients.setModel(dlm);
-		
-			dlm = new DefaultListModel();
+			
 			for(int i=0;i<offlineClientsList.size();i++){
 					dlm.addElement(offlineClientsList.get(i));
 			}

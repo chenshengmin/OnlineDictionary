@@ -23,6 +23,7 @@ public class LogIn extends JFrame{
 	private Socket socket;
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
+	private SignUp signUp;
 	
 	private JTextField jtfNameField=new JTextField();
 	private JTextField jtfPassWordField=new JTextField();
@@ -120,7 +121,7 @@ public class LogIn extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			new SignUp(socket,objfromServer,objtoServer);
+			signUp=new SignUp(socket,objfromServer,objtoServer);
 		}
 		
 	}

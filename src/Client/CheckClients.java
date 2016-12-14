@@ -1,6 +1,8 @@
 package Client;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -23,13 +26,15 @@ public class CheckClients extends JFrame{
 	private ObjectInputStream objfromServer=null;
 	JList jlonlineClients=new JList<String>();
 	JList jlofflineClients=new JList<String>();
+	private JButton jbtRefresh=new JButton("刷新");
 	
 	public CheckClients(Socket socket,ObjectInputStream objfromServer,ObjectOutputStream objtoServer){
 		this.socket=socket;
 		this.objfromServer=objfromServer;
 		this.objtoServer=objtoServer;
 		setGui();
-		addThread();
+		jbtRefresh.addActionListener(new RefreshListener());
+		showClients();
 	}
 	
 	public void setGui(){
@@ -50,6 +55,7 @@ public class CheckClients extends JFrame{
 		
 		setLayout(new BorderLayout(10,10));
 		add(p,BorderLayout.CENTER);
+		add(jbtRefresh,BorderLayout.SOUTH);
 		//将窗口置于屏幕中央
 		setLocationRelativeTo(null);
 		setTitle("CheckClient");
@@ -57,52 +63,73 @@ public class CheckClients extends JFrame{
 		setVisible(true);
 	}
 	
-	public void addThread(){
-		Refresh task=new Refresh();
-		new Thread(task).start();
-	}
-	
-	class Refresh implements Runnable{
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			while(!socket.isClosed()&&CheckClients.this.isVisible()){
-				try{
-					CheckClientsMessage ccm=new CheckClientsMessage();
-					objtoServer.writeObject(ccm);
-					objtoServer.flush();
-					
-					AnswerCheckClientsMessage accm=(AnswerCheckClientsMessage)objfromServer.readObject();
-					ArrayList<String> onlineClientsList=accm.getOnlineClientsList();
-					ArrayList<String> offlineClientsList=accm.getOfflineClientsList();
-					
-					DefaultListModel dlm = new DefaultListModel();
-					for(int i=0;i<onlineClientsList.size();i++){
-							dlm.addElement(onlineClientsList.get(i));
-					}
-					jlonlineClients.setModel(dlm);
+	public void showClients(){
+
+		try{
+			CheckClientsMessage ccm=new CheckClientsMessage();
+			objtoServer.writeObject(ccm);
+			objtoServer.flush();
 				
-					dlm = new DefaultListModel();
-					for(int i=0;i<offlineClientsList.size();i++){
-							dlm.addElement(offlineClientsList.get(i));
-					}
-					jlofflineClients.setModel(dlm);
-					
-					Thread.sleep(1000);
-				}
-				catch(IOException ex){
-					System.err.println(ex);
-				}
-				catch(ClassNotFoundException ex){
-					System.err.println(ex);
-				}
-				catch(InterruptedException ex){
-					System.err.println(ex);
-				}
-				
+			AnswerCheckClientsMessage accm=(AnswerCheckClientsMessage)objfromServer.readObject();
+			ArrayList<String> onlineClientsList=accm.getOnlineClientsList();
+			ArrayList<String> offlineClientsList=accm.getOfflineClientsList();
+			
+			DefaultListModel dlm = new DefaultListModel();
+			for(int i=0;i<onlineClientsList.size();i++){
+					dlm.addElement(onlineClientsList.get(i));
 			}
+			jlonlineClients.setModel(dlm);
+			
+			dlm = new DefaultListModel();
+			for(int i=0;i<offlineClientsList.size();i++){
+				dlm.addElement(offlineClientsList.get(i));
+			}
+			jlofflineClients.setModel(dlm);
+			
+		}
+		catch(IOException ex){
+			System.err.println(ex);
+		}
+		catch(ClassNotFoundException ex){
+			System.err.println(ex);
 		}
 	}
-	
+
+	private class RefreshListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			try{
+				CheckClientsMessage ccm=new CheckClientsMessage();
+				objtoServer.writeObject(ccm);
+				objtoServer.flush();
+					
+				AnswerCheckClientsMessage accm=(AnswerCheckClientsMessage)objfromServer.readObject();
+				ArrayList<String> onlineClientsList=accm.getOnlineClientsList();
+				ArrayList<String> offlineClientsList=accm.getOfflineClientsList();
+				
+				DefaultListModel dlm = new DefaultListModel();
+				for(int i=0;i<onlineClientsList.size();i++){
+						dlm.addElement(onlineClientsList.get(i));
+				}
+				jlonlineClients.setModel(dlm);
+				
+				dlm = new DefaultListModel();
+				for(int i=0;i<offlineClientsList.size();i++){
+					dlm.addElement(offlineClientsList.get(i));
+				}
+				jlofflineClients.setModel(dlm);
+				
+			}
+			catch(IOException ex){
+				System.err.println(ex);
+			}
+			catch(ClassNotFoundException ex){
+				System.err.println(ex);
+			}
+		}
+		
+	}
 
 }

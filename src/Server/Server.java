@@ -13,7 +13,7 @@ import Web.*;
 
 public class Server extends JFrame{
 	private JTextArea jta=new JTextArea();
-	Set<Socket> socketSet=Collections.synchronizedSet(new HashSet<Socket>());
+	private Set<HandleClient> clientsSet=Collections.synchronizedSet(new HashSet<HandleClient>());
 	
 	public static void main(String[] args){
 		new Server();
@@ -43,7 +43,6 @@ public class Server extends JFrame{
 				Socket socket=serverSocket.accept();
 				HandleClient task=new HandleClient(socket);
 				new Thread(task).start();
-				socketSet.add(socket);
 			}
 		}
 		catch(IOException ex){
@@ -52,29 +51,33 @@ public class Server extends JFrame{
 		
 	}
 	
-	
 	class HandleClient implements Runnable{
-		Socket socket;
-		String clientName;
-		ClientData clientData;
+		private Socket socket;
+		private String clientName;
+		private ClientData clientData;
+		private ObjectOutputStream objtoClient=null;
+		private ObjectInputStream objfromClient=null;
+		private ArrayList<SendWordCardMessage> wordCardsToBeSent=null;
 		
 		public HandleClient(Socket socket){
 			this.socket=socket;
 			clientData=new ClientData(socket);
+			wordCardsToBeSent=new ArrayList<SendWordCardMessage>();
+			try{
+				objtoClient=new ObjectOutputStream(socket.getOutputStream());
+				objfromClient=new ObjectInputStream(socket.getInputStream());
+			}
+			catch(IOException ex){
+				ex.printStackTrace();
+			}
 		}
 
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			try{
-				
-				ObjectOutputStream objtoClient=new ObjectOutputStream(socket.getOutputStream());
-				ObjectInputStream objfromClient=new ObjectInputStream(socket.getInputStream());;
-				
+			try{	
 				//循环接收来自客户端的消息
-				while(true){
-					if(socket.isClosed())
-						break;
+				while(!socket.isClosed()){
 					
 					Object obj=objfromClient.readObject();
 					//判断接收到的消息类型并进行处理
@@ -88,6 +91,9 @@ public class Server extends JFrame{
 						if(alm.getDoseNameExist()&&alm.getIsPasswordRight()){
 							clientName=((LoginMessage)obj).getName();
 							jta.append("User "+clientName+" logged in."+"\n");
+							synchronized (clientsSet) {
+								clientsSet.add(this);
+							}	
 						}
 						objtoClient.writeObject(alm);
 						objtoClient.flush();
@@ -135,6 +141,49 @@ public class Server extends JFrame{
 						objtoClient.writeObject(accm);
 						objtoClient.flush();
 					}//查询用户在线情况消息
+					else if(obj instanceof SendWordCardMessage){
+						synchronized (clientsSet) {
+							Iterator<HandleClient> iterator=clientsSet.iterator();
+							boolean hasFound=false;
+							String receiverName=((SendWordCardMessage)obj).getReceiverName();
+							while(iterator.hasNext()){
+								HandleClient hc=iterator.next();
+								if(hc.clientName.equals(receiverName)){
+									hasFound=true;
+									
+									AnswerSendWordCardMessage aswcm=new AnswerSendWordCardMessage(true, receiverName);
+									objtoClient.writeObject(aswcm);
+									objtoClient.flush();
+									
+									String senderName=((SendWordCardMessage)obj).getSenderName();
+									String content=((SendWordCardMessage)obj).getContent();
+									Color backgroundColor=((SendWordCardMessage)obj).getBackgroundColor();
+									Color fontColor=((SendWordCardMessage)obj).getFontColor();
+									Font font=((SendWordCardMessage)obj).getFont();
+									SendWordCardMessage swcm=new SendWordCardMessage(senderName, receiverName, content, backgroundColor, fontColor, font);      
+									hc.wordCardsToBeSent.add(swcm);
+									
+									break;
+								}
+							}
+							if(!hasFound){
+								AnswerSendWordCardMessage aswcm=new AnswerSendWordCardMessage(false, receiverName);
+								objtoClient.writeObject(aswcm);
+								objtoClient.flush();
+							}
+						}	
+					}//发送单词卡消息
+					else if(obj instanceof AskForWordCardMessage){
+						AnswerAskForWordCardMessage aafwcm=null;
+						if(wordCardsToBeSent.size()==0)
+							aafwcm=new AnswerAskForWordCardMessage(wordCardsToBeSent, false);
+						else {
+							aafwcm=new AnswerAskForWordCardMessage(wordCardsToBeSent, true);
+							wordCardsToBeSent=new ArrayList<SendWordCardMessage>();
+						}
+						objtoClient.writeObject(aafwcm);
+						objtoClient.flush();
+					}
 				}
 	
 			}
@@ -146,6 +195,9 @@ public class Server extends JFrame{
 			}
 			clientData.handleClientShutDown(clientName);
 			jta.append("User "+clientName+" logged out."+"\n");
+			synchronized (clientsSet) {
+				clientsSet.remove(this);
+			}	
 		}
 	
 	}

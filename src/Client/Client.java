@@ -2,6 +2,7 @@ package Client;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -11,10 +12,13 @@ import Message.*;
 
 public class Client extends JFrame{
 	private String myName;
+	private LogIn logIn;
+	private CheckClients checkClients;
 	
 	private JTextField jtf=new JTextField();
 	private JButton jbt=new JButton("translate");
 	private JButton jbtCheckClients=new JButton("查看其他用户在线状态");
+	private JButton jbtCheckWordCard=new JButton("查看是否收到单词卡");
 	
 	private JCheckBox jcbYoudao=new JCheckBox("有道");
 	private JCheckBox jcbBaidu=new JCheckBox("百度");
@@ -40,7 +44,7 @@ public class Client extends JFrame{
 	
 	public Client(){
 		connectToServer();
-		new LogIn(this,socket,objfromServer,objtoServer);
+		logIn=new LogIn(this,socket,objfromServer,objtoServer);
 		initGui();
 		registerListener();
 	}
@@ -66,10 +70,15 @@ public class Client extends JFrame{
 		p2.add(secondLike);
 		p2.add(thirdLike);
 		
+		JPanel p3=new JPanel();
+		p3.setLayout(new BoxLayout(p3,BoxLayout.X_AXIS));
+		p3.add(jbtCheckClients);
+		p3.add(jbtCheckWordCard);
+		
 		setLayout(new BorderLayout());
 		add(p,BorderLayout.NORTH);
 		add(p2,BorderLayout.CENTER);
-		add(jbtCheckClients,BorderLayout.SOUTH);
+		add(p3,BorderLayout.SOUTH);
 		//将窗口置于屏幕中央
 		setLocationRelativeTo(null);
 		setTitle("Client");
@@ -81,6 +90,41 @@ public class Client extends JFrame{
 	public void registerListener(){
 		jbt.addActionListener(new WordSearchListener());
 		jbtCheckClients.addActionListener(new CheckClientsListener());
+		jbtCheckWordCard.addActionListener(new CheckWordCardListener());
+	}
+	
+	private class CheckWordCardListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			try{
+				AskForWordCardMessage afwcm=new AskForWordCardMessage();
+				objtoServer.writeObject(afwcm);
+				objtoServer.flush();
+				
+				AnswerAskForWordCardMessage aafwcm=(AnswerAskForWordCardMessage)objfromServer.readObject();
+				if(aafwcm.getIsThereWordCard()){
+					ArrayList<SendWordCardMessage> wordCards=aafwcm.getWordCardsToBeSent();
+					
+					for(int i=0;i<wordCards.size();i++){
+						int res=JOptionPane.showConfirmDialog(null,  "您收到一张来自"+wordCards.get(i).getSenderName()+"的单词卡，是否查看？", "有单词卡！", JOptionPane.YES_NO_OPTION);
+						if(res==0){
+							new WordCard(wordCards.get(i).getContent(),wordCards.get(i).getBackgroundColor(),wordCards.get(i).getFontColor(),wordCards.get(i).getFont(),wordCards.get(i).getSenderName());
+						}
+					}
+				}
+				else{
+					JOptionPane.showMessageDialog(null, "您尚未收到任何单词卡~", "alert", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			catch(IOException ex){
+				ex.printStackTrace();
+			}
+			catch(ClassNotFoundException ex){
+				ex.printStackTrace();
+			}
+		}
 	}
 	
 	public void connectToServer(){
@@ -176,7 +220,7 @@ public class Client extends JFrame{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			// TODO Auto-generated method stub
-			new CheckClients(socket,objfromServer,objtoServer);
+			checkClients=new CheckClients(socket,objfromServer,objtoServer);
 		}
 		
 	}
