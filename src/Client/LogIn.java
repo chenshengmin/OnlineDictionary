@@ -100,6 +100,7 @@ public class LogIn extends JFrame{
 						JOptionPane.showMessageDialog(null, "ÃÜÂë´íÎó", "¾¯¸æ",JOptionPane.ERROR_MESSAGE);
 					}
 					else{
+						client.setMyName(name);
 						setVisible(false);
 						client.setVisible(true);
 					}

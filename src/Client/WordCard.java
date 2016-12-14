@@ -38,7 +38,7 @@ public class WordCard extends JFrame{
 		}
 		stringWidth=tempStringWidth;
 		
-		setSize((int)(stringWidth*(1/0.618)), (int)(stringHeight*(1/0.618)));
+		setSize((int)(stringWidth*(1/0.618)), (int)(stringHeight*(1/0.618)*1.44));
 	}
 	
 	public WordCard(String text,Color backgroundColor,Color fontColor,Font font,String senderName){

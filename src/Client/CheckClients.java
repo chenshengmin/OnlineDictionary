@@ -66,7 +66,7 @@ public class CheckClients extends JFrame{
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			while(!socket.isClosed()){
+			while(!socket.isClosed()&&CheckClients.this.isVisible()){
 				try{
 					CheckClientsMessage ccm=new CheckClientsMessage();
 					objtoServer.writeObject(ccm);

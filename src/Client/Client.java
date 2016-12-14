@@ -10,6 +10,8 @@ import javax.swing.*;
 import Message.*;
 
 public class Client extends JFrame{
+	private String myName;
+	
 	private JTextField jtf=new JTextField();
 	private JButton jbt=new JButton("translate");
 	private JButton jbtCheckClients=new JButton("查看其他用户在线状态");
@@ -28,6 +30,9 @@ public class Client extends JFrame{
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
 	
+	public void setMyName(String name){
+		myName=name;
+	}
 	
 	public static void main(String args[]){
 		new Client();
@@ -180,6 +185,7 @@ public class Client extends JFrame{
 		String labelString=null;
 		JTextField jtfDic=new JTextField("Dictionary");
 		JCheckBox jcbLike=new JCheckBox("点赞");
+		JButton jbtSend=new JButton("发送单词卡");
 		JTextArea jtaTrans=new JTextArea();
 		
 		public Like(){
@@ -188,16 +194,35 @@ public class Client extends JFrame{
 		}
 		
 		public void setLikeGui(){
+			
+			JPanel p=new JPanel();
+			p.setLayout(new BorderLayout());
+			p.add(jcbLike,BorderLayout.NORTH);
+			p.add(jbtSend,BorderLayout.SOUTH);
+			
 			setLayout(new BorderLayout(10,10));
 			jtfDic.setEditable(false);
 			jtaTrans.setEditable(false);
-			add(jcbLike,BorderLayout.EAST);
+			add(p,BorderLayout.EAST);
 			add(jtfDic,BorderLayout.WEST);
 			add(new JScrollPane(jtaTrans),BorderLayout.CENTER);
 		}
 		
 		public void registerLikeListener(){
 			jcbLike.addActionListener(new LikeChoosingListener());
+			jbtSend.addActionListener(new SendWordCardListener());
+		}
+		
+		private class SendWordCardListener implements ActionListener{
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(jtaTrans.getText()==null||jtaTrans.getText().equals(""))
+					JOptionPane.showMessageDialog(null, "该翻译结果为空！", "alert", JOptionPane.ERROR_MESSAGE);
+				else
+					new SendWordCard(socket,objfromServer,objtoServer,myName,jtaTrans.getText());
+			}
 		}
 		
 		private class LikeChoosingListener implements ActionListener{
