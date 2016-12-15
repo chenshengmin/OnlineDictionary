@@ -33,7 +33,7 @@ public class JFontChooser extends JPanel {
     // 设置界面风格   
     {   
         try {   
-            javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());   
+            javax.swing.UIManager.setLookAndFeel(/*javax.swing.UIManager.getSystemLookAndFeelClassName()*/"com.sun.java.swing.plaf.windows.WindowsLookAndFeel");   
         } catch (Exception e) {   
             e.printStackTrace();   
         }   

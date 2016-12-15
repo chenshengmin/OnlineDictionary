@@ -13,19 +13,31 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import Message.AnswerSignupMessage;
 import Message.SignupMessage;
 
 
 public class SignUp extends JFrame{
+	// 设置界面风格   
+    {   
+        try {   
+            UIManager.setLookAndFeel(/*javax.swing.UIManager.getSystemLookAndFeelClassName()*/"com.sun.java.swing.plaf.windows.WindowsLookAndFeel");   
+        } catch (Exception ex) {   
+            ex.printStackTrace();   
+        }   
+    } 
+	
 	private Socket socket=null;
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
 	
 	private JTextField jtfNameField=new JTextField();
-	private JTextField jtfPassWordField=new JTextField();
+	private JPasswordField jtfPassWordField=new JPasswordField();
+	private JPasswordField jtfConfirmPassWord=new JPasswordField();
 	private JButton jbtSignUpButton=new JButton("Sign up");
 	
 	public SignUp(Socket socket,ObjectInputStream objfromServer,ObjectOutputStream objtoServer){
@@ -37,28 +49,37 @@ public class SignUp extends JFrame{
 	}
 	
 	public void setSignUpGui(){
-		JPanel p1=new JPanel();
-		p1.setLayout(new BorderLayout());
-		p1.add(new JLabel("Enter Your Name"),BorderLayout.WEST);
-		p1.add(jtfNameField,BorderLayout.CENTER);
 		
-		JPanel p2=new JPanel();
-		p2.setLayout(new BorderLayout());
-		p2.add(new JLabel("Enter Your Password"),BorderLayout.WEST);
-		p2.add(jtfPassWordField,BorderLayout.CENTER);
+		JLabel jlb1=new JLabel("Name");
+		jlb1.setBounds(80, 50, 80, 50);
+		jtfNameField.setBounds(160, 50, 200, 50);
 		
-		setLayout(new BorderLayout());
+		JLabel jlb2=new JLabel("Password");
+		jlb2.setBounds(80, 150, 80, 50);
+		jtfPassWordField.setBounds(160, 150, 200, 50);
+		
+		JLabel jlb3=new JLabel("Confirm");
+		jlb3.setBounds(80, 250, 80, 50);
+		jtfConfirmPassWord.setBounds(160, 250, 200, 50);
+		
+		jbtSignUpButton.setBounds(160 ,350, 160 ,36);
+		
+		add(jlb1);
+		add(jlb2);
+		add(jlb3);
+		add(jtfNameField);
+		add(jtfPassWordField);
+		add(jtfConfirmPassWord);
+		add(jbtSignUpButton);
+		
+		setLayout(null);
 		setTitle("Sign up");
-		setSize(640,480);
+		setSize(480,480);
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		
 		//将窗口置于屏幕中央
 		setLocationRelativeTo(null); 
-		
-		add(p1,BorderLayout.NORTH);
-		add(p2,BorderLayout.CENTER);
-		add(jbtSignUpButton,BorderLayout.SOUTH);
 	}
 	
 	public void registerSignUpListener(){
@@ -72,8 +93,12 @@ public class SignUp extends JFrame{
 			// TODO Auto-generated method stub
 			String name=jtfNameField.getText();
 			String password=jtfPassWordField.getText();
+			String passwordConfirm=jtfConfirmPassWord.getText();
 			if(name==null||password==null||name.equals("")||password.equals("")){
-				JOptionPane.showMessageDialog(null, "alert", "输入不能为空", JOptionPane.ERROR_MESSAGE); 
+				JOptionPane.showMessageDialog(null, "输入不能为空~~", "警告", JOptionPane.ERROR_MESSAGE); 
+			}
+			else if(!password.equals(passwordConfirm)){
+				JOptionPane.showMessageDialog(null, "您两次输入的密码不一致哦！","警告",JOptionPane.ERROR_MESSAGE);
 			}
 			else{
 				//

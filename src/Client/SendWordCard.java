@@ -16,6 +16,15 @@ import javax.swing.*;
 import Message.*;
 
 public class SendWordCard extends JFrame{
+	// 设置界面风格   
+    {   
+        try {   
+            UIManager.setLookAndFeel(/*javax.swing.UIManager.getSystemLookAndFeelClassName()*/"com.sun.java.swing.plaf.windows.WindowsLookAndFeel");   
+        } catch (Exception ex) {   
+            ex.printStackTrace();   
+        }   
+    }
+	
 	private Socket socket;
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
@@ -48,38 +57,37 @@ public class SendWordCard extends JFrame{
 	}
 	
 	public void setGui(){
+		jlClients.setBorder(BorderFactory.createTitledBorder("您要发送给（按住Ctrl可群发）："));
+		jlExpressions.setBorder(BorderFactory.createTitledBorder("您还可以点击为单词卡添加以下表情："));
 		drawExpressions();
-		jlClients.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		
-		JPanel p1=new JPanel();
-		p1.setLayout(new BorderLayout());
-		p1.add(new JLabel("发送给:"),BorderLayout.NORTH);
-		p1.add(jlClients,BorderLayout.CENTER);
+		jlClients.setBounds(40, 40, 240, 480);
 		
-		JPanel p2=new JPanel();
-		p2.setLayout(new BoxLayout(p2,BoxLayout.Y_AXIS));
-		p2.add(new JPanel());
-		p2.add(jbtChooseBackgroundColor);
-		p2.add(new JPanel());
-		p2.add(jbtChooseFont);
-		p2.add(new JPanel());
-		p2.add(jbtReview);
-		p2.add(new JPanel());
-		p2.add(jbtSend);
+		jlExpressions.setBounds(320, 40, 240, 480);
 		
-		JPanel p3=new JPanel();
-		p3.setLayout(new BorderLayout());
-		p3.add(new JLabel("您可以为单词卡添加以下表情:"),BorderLayout.NORTH);
-		p3.add(jlExpressions,BorderLayout.CENTER);
+		jbtChooseBackgroundColor.setBounds(600, 95, 160, 40);
 		
-		setLayout(new BoxLayout(this.getContentPane(),BoxLayout.X_AXIS));
-		add(p1);
-		add(p3);
-		add(p2);
-		setLocationRelativeTo(null);
+		jbtChooseFont.setBounds(600, 205, 160, 40);
+		
+		jbtReview.setBounds(600, 315, 160, 40);
+		
+		jbtSend.setBounds(600, 425, 160, 40);
+
+
+		add(jbtChooseBackgroundColor);
+		add(jbtChooseFont);
+		add(jbtReview);
+		add(jbtSend);
+		
+		add(jlClients);
+		add(jlExpressions);
+			
+		setLayout(null);
 		setTitle("Client");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setSize(600,400);
+		pack();
+		setSize(800,600);
+		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 	

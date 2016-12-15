@@ -16,11 +16,21 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
 import Message.AnswerCheckClientsMessage;
 import Message.CheckClientsMessage;
 
 public class CheckClients extends JFrame{
+	// 设置界面风格   
+    {   
+        try {   
+            UIManager.setLookAndFeel(/*javax.swing.UIManager.getSystemLookAndFeelClassName()*/"com.sun.java.swing.plaf.windows.WindowsLookAndFeel");   
+        } catch (Exception ex) {   
+            ex.printStackTrace();   
+        }   
+    }
+	
 	private Socket socket;
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
@@ -40,26 +50,29 @@ public class CheckClients extends JFrame{
 	public void setGui(){
 		JPanel p1=new JPanel();
 		p1.setLayout(new BorderLayout());
-		p1.add(new JLabel("在线用户"),BorderLayout.NORTH);
+		//p1.add(new JLabel("在线用户"),BorderLayout.NORTH);
 		p1.add(jlonlineClients,BorderLayout.CENTER);
+		p1.setBorder(javax.swing.BorderFactory.createTitledBorder("在线用户"));
+		p1.setBounds(60, 40, 200, 400);
 		
 		JPanel p2=new JPanel();
 		p2.setLayout(new BorderLayout());
-		p2.add(new JLabel("离线用户"),BorderLayout.NORTH);
+		//p2.add(new JLabel("离线用户"),BorderLayout.NORTH);
 		p2.add(jlofflineClients,BorderLayout.CENTER);
+		p2.setBorder(javax.swing.BorderFactory.createTitledBorder("离线用户"));
+		p2.setBounds(300, 40, 200, 400);
 		
-		JPanel p=new JPanel();
-		p.setLayout(new BoxLayout(p,BoxLayout.X_AXIS));
-		p.add(p1);
-		p.add(p2);
+		jbtRefresh.setBounds(217, 475, 125, 36);
 		
-		setLayout(new BorderLayout(10,10));
-		add(p,BorderLayout.CENTER);
-		add(jbtRefresh,BorderLayout.SOUTH);
+		setLayout(null);
+		add(p1);
+		add(p2);
+		add(jbtRefresh);
+		pack();
+		setSize(577,580);
 		//将窗口置于屏幕中央
 		setLocationRelativeTo(null);
 		setTitle("CheckClient");
-		setSize(800,600);
 		setVisible(true);
 	}
 	

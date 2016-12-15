@@ -11,14 +11,23 @@ import javax.swing.*;
 import Message.*;
 
 public class Client extends JFrame{
+	// 设置界面风格   
+    {   
+        try {   
+            UIManager.setLookAndFeel(/*javax.swing.UIManager.getSystemLookAndFeelClassName()*/"com.sun.java.swing.plaf.windows.WindowsLookAndFeel");   
+        } catch (Exception ex) {   
+            ex.printStackTrace();   
+        }   
+    } 
+	
 	private String myName;
 	private LogIn logIn;
 	private CheckClients checkClients;
 	
 	private JTextField jtf=new JTextField();
-	private JButton jbt=new JButton("translate");
+	private JButton jbt=new JButton("Translate");
 	private JButton jbtCheckClients=new JButton("查看其他用户在线状态");
-	private JButton jbtCheckWordCard=new JButton("查看是否收到单词卡");
+	private JButton jbtCheckWordCard=new JButton("查看是否收到了单词卡");
 	
 	private JCheckBox jcbYoudao=new JCheckBox("有道");
 	private JCheckBox jcbBaidu=new JCheckBox("百度");
@@ -51,38 +60,67 @@ public class Client extends JFrame{
 	
 	public void initGui(){
 		JPanel p1=new JPanel();
-		p1.setLayout(new BorderLayout());
-		p1.add(jcbYoudao,BorderLayout.WEST);
-		p1.add(jcbBaidu,BorderLayout.CENTER);
-		p1.add(jcbBing,BorderLayout.EAST);
+		p1.setLayout(new FlowLayout());
+		p1.add(jcbYoudao);
+		p1.add(jcbBaidu);
+		p1.add(jcbBing);
 				
 		JPanel p=new JPanel();
-		p.setLayout(new BorderLayout());
-		p.add(new JLabel("Search word"),BorderLayout.WEST);
+		p.setLayout(new BorderLayout(10,10));
+		p.add(new JLabel("Input word"),BorderLayout.WEST);
 		p.add(jtf,BorderLayout.CENTER);
 		jtf.setHorizontalAlignment(JTextField.LEFT);
 		p.add(jbt,BorderLayout.EAST);
 		p.add(p1,BorderLayout.SOUTH);
 		
+		JPanel p6=new JPanel();
+		p6.setLayout(new BorderLayout(20,30));
+		p6.add(p,BorderLayout.CENTER);
+		p6.add(new JPanel(),BorderLayout.NORTH);
+		p6.add(new JPanel(),BorderLayout.WEST);
+		p6.add(new JPanel(),BorderLayout.EAST);
+		//p6.add(new JPanel(),BorderLayout.SOUTH);
+		
 		JPanel p2=new JPanel();
-		p2.setLayout(new BoxLayout(p2,BoxLayout.Y_AXIS));
+		p2.setLayout(new GridLayout(3, 1, 10, 10));
 		p2.add(firstLike);
 		p2.add(secondLike);
 		p2.add(thirdLike);
 		
+		JPanel p5=new JPanel();
+		p5.setLayout(new BorderLayout(20,20));
+		p5.add(p2,BorderLayout.CENTER);
+		p5.add(new JPanel(),BorderLayout.NORTH);
+		p5.add(new JPanel(),BorderLayout.WEST);
+		p5.add(new JPanel(),BorderLayout.EAST);
+		p5.add(new JPanel(),BorderLayout.SOUTH);
+		
 		JPanel p3=new JPanel();
-		p3.setLayout(new BoxLayout(p3,BoxLayout.X_AXIS));
+		//p3.setLayout(new GridLayout(1, 2,10,10));
+		p3.setLayout(new FlowLayout());
 		p3.add(jbtCheckClients);
 		p3.add(jbtCheckWordCard);
 		
+		JPanel p4=new JPanel();
+		p4.setLayout(new BorderLayout(20,40));
+		p4.add(p3,BorderLayout.CENTER);
+		//p4.add(new JPanel(),BorderLayout.NORTH);
+		p4.add(new JPanel(),BorderLayout.WEST);
+		p4.add(new JPanel(),BorderLayout.EAST);
+		p4.add(new JPanel(),BorderLayout.SOUTH);
+		
 		setLayout(new BorderLayout());
-		add(p,BorderLayout.NORTH);
-		add(p2,BorderLayout.CENTER);
-		add(p3,BorderLayout.SOUTH);
+		add(p6,BorderLayout.NORTH);
+		add(p5,BorderLayout.CENTER);
+		add(p4,BorderLayout.SOUTH);
+		
+		
 		//将窗口置于屏幕中央
+		//
+		
+		pack();
+		setSize(1024,768);
 		setLocationRelativeTo(null);
-		setTitle("Client");
-		setSize(800,600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(false);
 	}
@@ -227,7 +265,7 @@ public class Client extends JFrame{
 	
 	class Like extends JPanel{
 		String labelString=null;
-		JTextField jtfDic=new JTextField("Dictionary");
+		JLabel jtfDic=new JLabel("Dictionary");
 		JCheckBox jcbLike=new JCheckBox("点赞");
 		JButton jbtSend=new JButton("发送单词卡");
 		JTextArea jtaTrans=new JTextArea();
@@ -241,13 +279,20 @@ public class Client extends JFrame{
 			
 			JPanel p=new JPanel();
 			p.setLayout(new BorderLayout());
-			p.add(jcbLike,BorderLayout.NORTH);
+			p.add(jcbLike,BorderLayout.CENTER);
 			p.add(jbtSend,BorderLayout.SOUTH);
+			jtfDic.setPreferredSize(new Dimension(60, 30));
+			
+			JPanel p1=new JPanel();
+			p1.setLayout(new BorderLayout(0,30));
+			p1.add(p,BorderLayout.CENTER);
+			p1.add(new JPanel(),BorderLayout.NORTH);
+			p1.add(new JPanel(),BorderLayout.WEST);
+			p1.add(new JPanel(),BorderLayout.SOUTH);
 			
 			setLayout(new BorderLayout(10,10));
-			jtfDic.setEditable(false);
 			jtaTrans.setEditable(false);
-			add(p,BorderLayout.EAST);
+			add(p1,BorderLayout.EAST);
 			add(jtfDic,BorderLayout.WEST);
 			add(new JScrollPane(jtaTrans),BorderLayout.CENTER);
 		}

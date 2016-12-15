@@ -12,6 +12,15 @@ import Database.*;
 import Web.*;
 
 public class Server extends JFrame{
+	// 设置界面风格   
+    {   
+        try {   
+            UIManager.setLookAndFeel(/*javax.swing.UIManager.getSystemLookAndFeelClassName()*/"com.sun.java.swing.plaf.windows.WindowsLookAndFeel");   
+        } catch (Exception ex) {   
+            ex.printStackTrace();   
+        }   
+    }
+	
 	private JTextArea jta=new JTextArea();
 	private Set<HandleClient> clientsSet=Collections.synchronizedSet(new HashSet<HandleClient>());
 	
@@ -148,12 +157,7 @@ public class Server extends JFrame{
 							String receiverName=((SendWordCardMessage)obj).getReceiverName();
 							while(iterator.hasNext()){
 								HandleClient hc=iterator.next();
-								if(hc.clientName.equals(receiverName)){
-									hasFound=true;
-									
-									AnswerSendWordCardMessage aswcm=new AnswerSendWordCardMessage(true, receiverName);
-									objtoClient.writeObject(aswcm);
-									objtoClient.flush();
+								if(hc.clientName.equals(receiverName)){			
 									
 									String senderName=((SendWordCardMessage)obj).getSenderName();
 									String content=((SendWordCardMessage)obj).getContent();
@@ -162,6 +166,11 @@ public class Server extends JFrame{
 									Font font=((SendWordCardMessage)obj).getFont();
 									SendWordCardMessage swcm=new SendWordCardMessage(senderName, receiverName, content, backgroundColor, fontColor, font);      
 									hc.wordCardsToBeSent.add(swcm);
+									
+									AnswerSendWordCardMessage aswcm=new AnswerSendWordCardMessage(true, receiverName);
+									objtoClient.writeObject(aswcm);
+									objtoClient.flush();
+									hasFound=true;
 									
 									break;
 								}

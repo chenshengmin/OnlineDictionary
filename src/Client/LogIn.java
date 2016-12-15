@@ -1,6 +1,9 @@
 package Client;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -8,17 +11,29 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import Message.*;
 
 
 public class LogIn extends JFrame{
+	// 设置界面风格   
+    {   
+        try {   
+            UIManager.setLookAndFeel(/*javax.swing.UIManager.getSystemLookAndFeelClassName()*/"com.sun.java.swing.plaf.windows.WindowsLookAndFeel");   
+        } catch (Exception ex) {   
+            ex.printStackTrace();   
+        }   
+    } 
+	
 	private Client client;
 	private Socket socket;
 	private ObjectOutputStream objtoServer=null;
@@ -26,7 +41,7 @@ public class LogIn extends JFrame{
 	private SignUp signUp;
 	
 	private JTextField jtfNameField=new JTextField();
-	private JTextField jtfPassWordField=new JTextField();
+	private JPasswordField jtfPassWordField=new JPasswordField();
 	private JButton jbtLogInButton=new JButton("Log in");
 	private JButton jbtSignUpButton=new JButton("Sign up");
 	
@@ -42,32 +57,47 @@ public class LogIn extends JFrame{
 	}
 	
 	public void setLogInGui(){
+		/*
 		JPanel p1=new JPanel();
-		p1.setLayout(new BorderLayout());
-		p1.add(new JLabel("Enter Your Name"),BorderLayout.WEST);
-		p1.add(jtfNameField,BorderLayout.CENTER);
+		p1.setLayout(new FlowLayout());
+		p1.add(new JLabel("Enter Your Name"));
+		p1.add(jtfNameField);
 		
 		JPanel p2=new JPanel();
-		p2.setLayout(new BorderLayout());
-		p2.add(new JLabel("Enter Your Password"),BorderLayout.WEST);
-		p2.add(jtfPassWordField,BorderLayout.CENTER);
+		p2.setLayout(new FlowLayout());
+		p2.add(new JLabel("Enter Your Password"));
+		p2.add(jtfPassWordField);
 		
 		JPanel p3=new JPanel();
-		p3.setLayout(new BorderLayout());
-		p3.add(jbtLogInButton,BorderLayout.WEST);
-		p3.add(jbtSignUpButton,BorderLayout.EAST);
+		p3.setLayout(new GridLayout(1,2));
+		p3.add(jbtLogInButton);
+		p3.add(jbtSignUpButton);*/
 		
-		setLayout(new BorderLayout());
+		JLabel jlb1=new JLabel("Name");
+		jlb1.setBounds(100, 50, 100, 50);
+		jtfNameField.setBounds(250, 50, 250, 50);
+		
+		JLabel jlb2=new JLabel("Password");
+		jlb2.setBounds(100, 150, 100, 50);
+		jtfPassWordField.setBounds(250, 150, 250, 50);
+		
+		jbtLogInButton.setBounds(100,250, 150, 36);
+		jbtSignUpButton.setBounds(350,250, 150 ,36);
+		
+		setLayout(null);
 		setTitle("Log In");
-		setSize(640,480);
+		setSize(625,375);
+		setBackground(Color.LIGHT_GRAY);
+		add(jlb1);
+		add(jlb2);
+		add(jtfNameField);
+		add(jtfPassWordField);
+		add(jbtLogInButton);
+		add(jbtSignUpButton);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		//将窗口置于屏幕中央
 		setLocationRelativeTo(null); 
-		
-		add(p1,BorderLayout.NORTH);
-		add(p2,BorderLayout.CENTER);
-		add(p3,BorderLayout.SOUTH);
 	}
 	
 	public void registerlogInListener(){
@@ -102,6 +132,7 @@ public class LogIn extends JFrame{
 					}
 					else{
 						client.setMyName(name);
+						client.setTitle("Client  \""+name+"\"");
 						setVisible(false);
 						client.setVisible(true);
 					}
