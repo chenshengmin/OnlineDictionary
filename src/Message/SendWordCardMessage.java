@@ -3,14 +3,14 @@ package Message;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.Serializable;
-
+//发送单词卡消息
 public class SendWordCardMessage implements Serializable{
-	private String senderName;
-	private String receiverName;
-	private String content;
-	private Color backgroundColor;
-	private Color fontColor;
-	private Font font;
+	private String senderName;//发送的用户名
+	private String receiverName;//接收者
+	private String content;//单词卡内容
+	private Color backgroundColor;//单词卡背景色
+	private Color fontColor;//字体颜色
+	private Font font;//字体
 	
 	public SendWordCardMessage(String senderName,String receiverName,String content,Color backgroundColor,Color fontColor,Font font){
 		this.senderName=senderName;

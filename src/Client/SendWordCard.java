@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 
 import Message.*;
-
+//发送单词卡的界面
 public class SendWordCard extends JFrame{
 	// 设置界面风格   
     {   
@@ -29,18 +29,18 @@ public class SendWordCard extends JFrame{
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
 	
-	private String senderName=null;
-	private String content=null;
-	private Color backgroundColor=Color.WHITE;
-	private Color fontColor=Color.BLACK;
-	private Font font=new Font("Dialog", Font.PLAIN, 20);
+	private String senderName=null; //发送者名字
+	private String content=null; //发送内容
+	private Color backgroundColor=Color.WHITE; //单词卡背景色
+	private Color fontColor=Color.BLACK; //单词卡字体颜色
+	private Font font=new Font("Dialog", Font.PLAIN, 20); //单词卡字体
 	
-	JList jlClients=new JList<String>();
-	JList jlExpressions=new JList<String>();
-	JButton jbtChooseBackgroundColor=new JButton("选择单词卡背景色");
-	JButton jbtChooseFont=new JButton("选择字体和颜色");
-	JButton jbtReview=new JButton("预览");
-	JButton jbtSend=new JButton("发送");
+	JList jlClients=new JList<String>(); //可选择的用户列表
+	JList jlExpressions=new JList<String>(); //可选择的表情列表
+	JButton jbtChooseBackgroundColor=new JButton("选择单词卡背景色"); //选背景色按钮
+	JButton jbtChooseFont=new JButton("选择字体和颜色"); //选字体和颜色按钮
+	JButton jbtReview=new JButton("预览"); //预览按钮
+	JButton jbtSend=new JButton("发送"); //发送按钮
 	
 	
 	public SendWordCard(Socket socket,ObjectInputStream objfromServer,ObjectOutputStream objtoServer,String senderName,String content){
@@ -55,7 +55,7 @@ public class SendWordCard extends JFrame{
 		registerListener();
 		showClients();
 	}
-	
+	//画界面
 	public void setGui(){
 		jlClients.setBorder(BorderFactory.createTitledBorder("您要发送给（按住Ctrl可群发）："));
 		jlExpressions.setBorder(BorderFactory.createTitledBorder("您还可以点击为单词卡添加以下表情："));
@@ -83,14 +83,14 @@ public class SendWordCard extends JFrame{
 		add(jlExpressions);
 			
 		setLayout(null);
-		setTitle("Client");
+		setTitle("Send Wordcard");
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		pack();
 		setSize(800,600);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
-	
+	//显示可选表情
 	public void drawExpressions(){
 		DefaultListModel dlm = new DefaultListModel();
 		dlm.addElement("( ⊙ o ⊙ )");
@@ -103,14 +103,14 @@ public class SendWordCard extends JFrame{
 		dlm.addElement("(╯﹏╰)");
 		jlExpressions.setModel(dlm);
 	}
-	
+	//注册监听器
 	public void registerListener(){
 		jbtChooseBackgroundColor.addActionListener(new ChooseBackgroundListener());
 		jbtChooseFont.addActionListener(new ChooseFontListener());
 		jbtReview.addActionListener(new ReviewListener());
 		jbtSend.addActionListener(new SendListener());
 	}
-	
+	//背景色选择监听程序
 	private class ChooseBackgroundListener implements ActionListener{
 
 		@Override
@@ -120,7 +120,7 @@ public class SendWordCard extends JFrame{
 		}
 		
 	}
-	
+	//字体选择监听程序
 	private class ChooseFontListener implements ActionListener{
 
 		@Override
@@ -137,7 +137,7 @@ public class SendWordCard extends JFrame{
 	        }
 		}	
 	}
-	
+	//预览事件监听程序
 	private class ReviewListener implements ActionListener{
 
 		@Override
@@ -151,7 +151,7 @@ public class SendWordCard extends JFrame{
 			new WordCard(tempContent, backgroundColor, fontColor, font, senderName);
 		}
 	}
-	
+	//发送事件监听程序
 	private class SendListener implements ActionListener{
 
 		@Override
@@ -199,7 +199,7 @@ public class SendWordCard extends JFrame{
 		}
 		
 	}
-	
+	//展示可以发送单词卡的用户列表
 	public void showClients(){
 		try{
 			CheckClientsMessage ccm=new CheckClientsMessage();

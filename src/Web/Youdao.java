@@ -3,7 +3,7 @@ package Web;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
+//”–µ¿≈¿≥ÊÀ„∑®
 public class Youdao {
 	public static String lookUp(String word){
 		java.util.Scanner input = null;

@@ -9,7 +9,7 @@ import java.sql.Statement;
 import java.util.*;
 
 import Message.*;
-
+//数据库相关操作类
 public class ClientData {
 	
 	public static void main(String[] args) throws Exception {
@@ -21,7 +21,7 @@ public class ClientData {
         // 执行数据库操作之前要在数据库管理系统上创建一个数据库，名字自己定，
         // 下面语句之前就要先创建javademo数据库
         String url = "jdbc:mysql://localhost:3306/clientdata?"
-                + "user=root&password=root&useUnicode=true&characterEncoding=UTF8";
+                + "user=root&password=root&useUnicode=true&characterEncoding=UTF8&useSSL=true";
         try {
             // 之所以要使用下面这条语句，是因为要使用MySQL的驱动，所以我们要把它驱动起来，
             // 可以通过Class.forName把它加载进去，也可以通过初始化来驱动起来，下面三种形式都可以
@@ -65,7 +65,7 @@ public class ClientData {
 	private Statement statement=null;
 	
 	private Socket socket;
-	
+	//初始连接到默认数据库
 	public ClientData(Socket socket){
 		this.socket=socket;
 		try{
@@ -81,7 +81,7 @@ public class ClientData {
 			System.err.println(ex);
 		}
 	}
-	
+	//处理注册事件，将新用户添加到数据库
 	public AnswerSignupMessage handleSignupMessage(SignupMessage signup){
 		try{
 			String sql="select * from onlinedictionaryclient where NAME = '" + signup.getName() + "'";
@@ -104,7 +104,7 @@ public class ClientData {
 		}
 		return new AnswerSignupMessage(true);
 	}
-	
+	//处理登录事件，从数据库获得用户信息判断是否成功登录
 	public AnswerLoginMessage handleLoginMessage(LoginMessage login){
 		try{
 			String sql="select password from onlinedictionaryclient where NAME = '" + login.getName() + "';";
@@ -137,7 +137,7 @@ public class ClientData {
 		}
 		return new AnswerLoginMessage(false, false);
 	}
-	
+	//处理点赞事件，修改数据库中的用户喜好
 	public void handleLikeUpdateMessage(String clientName,LikeUpdateMessage likeUpdate){
 		try{
 			if(likeUpdate.getDicName().equals("Baidu")){
@@ -157,7 +157,7 @@ public class ClientData {
 			System.err.println(ex);
 		}
 	}
-	
+	//处理搜索单词事件，只返回用户喜欢的网站排名，翻译在网络部分
 	public String[] handleWordSearchMessage(String clientName,WordSearchMessage wsm){
 		String[] dicPriority=new String[3];
 		for(int i=0;i<3;i++){
@@ -269,7 +269,7 @@ public class ClientData {
 	
 		return dicPriority;
 	}
-	
+	//处理查看用户事件，返回要查看的用户列表
 	public AnswerCheckClientsMessage handleCheckClientsMessage(String clientName,CheckClientsMessage ccm){
 		ArrayList<String> onlineClientsList=new ArrayList<String>();
 		ArrayList<String> offlineClientsList=new ArrayList<String>();
@@ -303,7 +303,7 @@ public class ClientData {
 		
 		return accm;
 	}
-	
+	//处理用户离线事件，将用户的在线字段设为false
 	public void handleClientShutDown(String clientName){
 		try{
 			String sql="update onlinedictionaryclient set isonline=false where NAME = '"+ clientName + "';";

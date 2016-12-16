@@ -20,7 +20,7 @@ import javax.swing.UIManager;
 
 import Message.AnswerCheckClientsMessage;
 import Message.CheckClientsMessage;
-
+//查询其他在线用户的类，生成查询用户的gui，并发送查询用户消息
 public class CheckClients extends JFrame{
 	// 设置界面风格   
     {   
@@ -34,19 +34,19 @@ public class CheckClients extends JFrame{
 	private Socket socket;
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
-	JList jlonlineClients=new JList<String>();
-	JList jlofflineClients=new JList<String>();
-	private JButton jbtRefresh=new JButton("刷新");
+	JList jlonlineClients=new JList<String>();//在线用户列表
+	JList jlofflineClients=new JList<String>();//下线用户列表
+	private JButton jbtRefresh=new JButton("刷新");//刷新按钮
 	
 	public CheckClients(Socket socket,ObjectInputStream objfromServer,ObjectOutputStream objtoServer){
 		this.socket=socket;
 		this.objfromServer=objfromServer;
 		this.objtoServer=objtoServer;
-		setGui();
-		jbtRefresh.addActionListener(new RefreshListener());
-		showClients();
+		setGui();//画界面
+		jbtRefresh.addActionListener(new RefreshListener());//添加监听器
+		showClients();//显示列表内容
 	}
-	
+	//界面不用布局管理器，自由布局
 	public void setGui(){
 		JPanel p1=new JPanel();
 		p1.setLayout(new BorderLayout());
@@ -75,7 +75,7 @@ public class CheckClients extends JFrame{
 		setTitle("CheckClient");
 		setVisible(true);
 	}
-	
+	//发送消息请求查看其他用户，接受其他用户消息并重绘列表
 	public void showClients(){
 
 		try{
@@ -107,7 +107,7 @@ public class CheckClients extends JFrame{
 			System.err.println(ex);
 		}
 	}
-
+	//刷新，相当于再次调用showclients方法
 	private class RefreshListener implements ActionListener{
 
 		@Override

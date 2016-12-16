@@ -26,7 +26,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;   
 import javax.swing.event.ListSelectionEvent;   
 import javax.swing.event.ListSelectionListener;   
-   
+//实现字体选择功能  
+//本文件代码摘自http://blog.csdn.net/tangcaijun/article/details/8372943，完全是引用的，没有修改
 @SuppressWarnings("serial")   
 public class JFontChooser extends JPanel {   
    

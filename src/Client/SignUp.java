@@ -20,7 +20,7 @@ import javax.swing.UIManager;
 import Message.AnswerSignupMessage;
 import Message.SignupMessage;
 
-
+//注册界面类
 public class SignUp extends JFrame{
 	// 设置界面风格   
     {   
@@ -35,10 +35,10 @@ public class SignUp extends JFrame{
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
 	
-	private JTextField jtfNameField=new JTextField();
-	private JPasswordField jtfPassWordField=new JPasswordField();
-	private JPasswordField jtfConfirmPassWord=new JPasswordField();
-	private JButton jbtSignUpButton=new JButton("Sign up");
+	private JTextField jtfNameField=new JTextField(); //用户名填写
+	private JPasswordField jtfPassWordField=new JPasswordField(); //密码填写
+	private JPasswordField jtfConfirmPassWord=new JPasswordField(); //密码确认
+	private JButton jbtSignUpButton=new JButton("Sign up"); //注册按钮
 	
 	public SignUp(Socket socket,ObjectInputStream objfromServer,ObjectOutputStream objtoServer){
 		this.socket=socket;
@@ -47,7 +47,7 @@ public class SignUp extends JFrame{
 		setSignUpGui();
 		registerSignUpListener();
 	}
-	
+	//画界面
 	public void setSignUpGui(){
 		
 		JLabel jlb1=new JLabel("Name");
@@ -81,11 +81,11 @@ public class SignUp extends JFrame{
 		//将窗口置于屏幕中央
 		setLocationRelativeTo(null); 
 	}
-	
+	//注册监听器
 	public void registerSignUpListener(){
 		jbtSignUpButton.addActionListener(new SignUpListener());
 	}
-	
+	//注册监听事件
 	private class SignUpListener implements ActionListener{
 
 		@Override

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
+//±ÿ”¶≈¿≥ÊÀ„∑®
 public class Bing {
 	public static String lookUp(String word){
 		java.util.Scanner input = null;

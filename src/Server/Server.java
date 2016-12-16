@@ -10,7 +10,7 @@ import javax.swing.*;
 import Message.*;
 import Database.*;
 import Web.*;
-
+//服务器类
 public class Server extends JFrame{
 	// 设置界面风格   
     {   
@@ -21,8 +21,8 @@ public class Server extends JFrame{
         }   
     }
 	
-	private JTextArea jta=new JTextArea();
-	private Set<HandleClient> clientsSet=Collections.synchronizedSet(new HashSet<HandleClient>());
+	private JTextArea jta=new JTextArea();//显示用户登录登出消息的文本域
+	private Set<HandleClient> clientsSet=Collections.synchronizedSet(new HashSet<HandleClient>());//存储用户线程的同步集合
 	
 	public static void main(String[] args){
 		new Server();
@@ -32,7 +32,7 @@ public class Server extends JFrame{
 		initGui();
 		connectToClient();
 	}	
-	
+	//初始化界面
 	public void initGui(){
 		setLayout(new BorderLayout());
 		add(new JScrollPane(jta),BorderLayout.CENTER);
@@ -41,7 +41,7 @@ public class Server extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
-	
+	//尝试连接到客户端，给每个成功连接的客户端一个线程
 	public void connectToClient(){
 		
 		try{
@@ -59,14 +59,14 @@ public class Server extends JFrame{
 		}	
 		
 	}
-	
+	//处理客户的线程任务
 	class HandleClient implements Runnable{
 		private Socket socket;
 		private String clientName;
-		private ClientData clientData;
+		private ClientData clientData; //每个客户端都给一个连接到数据库类的对象
 		private ObjectOutputStream objtoClient=null;
 		private ObjectInputStream objfromClient=null;
-		private ArrayList<SendWordCardMessage> wordCardsToBeSent=null;
+		private ArrayList<SendWordCardMessage> wordCardsToBeSent=null;//待收的单词卡集合
 		
 		public HandleClient(Socket socket){
 			this.socket=socket;
@@ -192,7 +192,7 @@ public class Server extends JFrame{
 						}
 						objtoClient.writeObject(aafwcm);
 						objtoClient.flush();
-					}
+					}//询问是否收到单词卡消息
 				}
 	
 			}
@@ -202,10 +202,10 @@ public class Server extends JFrame{
 			catch(ClassNotFoundException ex){
 				System.err.println(ex);
 			}
-			clientData.handleClientShutDown(clientName);
+			clientData.handleClientShutDown(clientName); //数据库处理客户端离线
 			jta.append("User "+clientName+" logged out."+"\n");
 			synchronized (clientsSet) {
-				clientsSet.remove(this);
+				clientsSet.remove(this); //从线程任务列表中删除本线程
 			}	
 		}
 	

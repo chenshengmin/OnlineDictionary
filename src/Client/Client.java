@@ -9,7 +9,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import Message.*;
-
+//用户主界面
 public class Client extends JFrame{
 	// 设置界面风格   
     {   
@@ -20,19 +20,19 @@ public class Client extends JFrame{
         }   
     } 
 	
-	private String myName;
-	private LogIn logIn;
-	private CheckClients checkClients;
+	private String myName; //用户名字
+	private LogIn logIn; //登陆界面对象
+	private CheckClients checkClients; //查看用户类的对象
 	
-	private JTextField jtf=new JTextField();
-	private JButton jbt=new JButton("Translate");
+	private JTextField jtf=new JTextField(); //输入单词框
+	private JButton jbt=new JButton("Translate"); //翻译按钮
 	private JButton jbtCheckClients=new JButton("查看其他用户在线状态");
 	private JButton jbtCheckWordCard=new JButton("查看是否收到了单词卡");
-	
+	//三个复选框
 	private JCheckBox jcbYoudao=new JCheckBox("有道");
 	private JCheckBox jcbBaidu=new JCheckBox("百度");
 	private JCheckBox jcbBing=new JCheckBox("必应");
-	
+	//三个显示翻译的文本区，Like为每个翻译及其点赞选项，发送单词卡按钮封装成的类
 	private Like firstLike=new Like();
 	private Like secondLike=new Like();
 	private Like thirdLike=new Like();
@@ -52,10 +52,10 @@ public class Client extends JFrame{
 	}
 	
 	public Client(){
-		connectToServer();
-		logIn=new LogIn(this,socket,objfromServer,objtoServer);
-		initGui();
-		registerListener();
+		connectToServer(); //连接到服务器
+		logIn=new LogIn(this,socket,objfromServer,objtoServer);//先显示登录界面，将主界面设为不可见
+		initGui();//画界面
+		registerListener();//注册监听器
 	}
 	
 	public void initGui(){
@@ -130,7 +130,7 @@ public class Client extends JFrame{
 		jbtCheckClients.addActionListener(new CheckClientsListener());
 		jbtCheckWordCard.addActionListener(new CheckWordCardListener());
 	}
-	
+	//查看是否收到单词卡的事件监听程序
 	private class CheckWordCardListener implements ActionListener{
 
 		@Override
@@ -178,7 +178,7 @@ public class Client extends JFrame{
 			System.err.println(ex);
 		}
 	}
-	
+	//查单词的事件监听程序
 	private class WordSearchListener implements ActionListener{
 
 		@Override
@@ -252,7 +252,7 @@ public class Client extends JFrame{
 			likeLock=false;
 		}
 	}
-	
+	//查看在线用户的监听程序
 	private class CheckClientsListener implements ActionListener{
 
 		@Override
@@ -262,19 +262,19 @@ public class Client extends JFrame{
 		}
 		
 	}
-	
+	//每条翻译结果封装成的类
 	class Like extends JPanel{
 		String labelString=null;
-		JLabel jtfDic=new JLabel("Dictionary");
-		JCheckBox jcbLike=new JCheckBox("点赞");
-		JButton jbtSend=new JButton("发送单词卡");
-		JTextArea jtaTrans=new JTextArea();
+		JLabel jtfDic=new JLabel("Dictionary");//词典网站名，每次搜索都刷新
+		JCheckBox jcbLike=new JCheckBox("点赞");//点赞选择框
+		JButton jbtSend=new JButton("发送单词卡");//发送单词卡按钮
+		JTextArea jtaTrans=new JTextArea();//显示翻译的文本区
 		
 		public Like(){
 			setLikeGui();
 			registerLikeListener();
 		}
-		
+		//画界面
 		public void setLikeGui(){
 			
 			JPanel p=new JPanel();
@@ -301,7 +301,7 @@ public class Client extends JFrame{
 			jcbLike.addActionListener(new LikeChoosingListener());
 			jbtSend.addActionListener(new SendWordCardListener());
 		}
-		
+		//发送单词卡的监听程序
 		private class SendWordCardListener implements ActionListener{
 
 			@Override
@@ -313,7 +313,7 @@ public class Client extends JFrame{
 					new SendWordCard(socket,objfromServer,objtoServer,myName,jtaTrans.getText());
 			}
 		}
-		
+		//点赞监听程序
 		private class LikeChoosingListener implements ActionListener{
 
 			@Override
@@ -346,7 +346,7 @@ public class Client extends JFrame{
 				}
 			}
 		}
-		
+		//每次搜索后刷新对应的三个翻译顺序
 		public void refresh(String dicName,String translation){
 			labelString=dicName;
 			

@@ -3,7 +3,7 @@ package Web;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
+//∞Ÿ∂»≈¿≥ÊÀ„∑®
 public class Baidu {
 	public static String lookUp(String word){
 		java.util.Scanner input = null;

@@ -23,7 +23,7 @@ import javax.swing.UIManager;
 
 import Message.*;
 
-
+//登录功能类
 public class LogIn extends JFrame{
 	// 设置界面风格   
     {   
@@ -34,16 +34,16 @@ public class LogIn extends JFrame{
         }   
     } 
 	
-	private Client client;
-	private Socket socket;
+	private Client client; //需要获得客户端主界面引用
+	private Socket socket; 
 	private ObjectOutputStream objtoServer=null;
 	private ObjectInputStream objfromServer=null;
-	private SignUp signUp;
+	private SignUp signUp; //可能需要弹出的注册界面
 	
-	private JTextField jtfNameField=new JTextField();
-	private JPasswordField jtfPassWordField=new JPasswordField();
-	private JButton jbtLogInButton=new JButton("Log in");
-	private JButton jbtSignUpButton=new JButton("Sign up");
+	private JTextField jtfNameField=new JTextField(); //输入用户名
+	private JPasswordField jtfPassWordField=new JPasswordField(); //输入密码
+	private JButton jbtLogInButton=new JButton("Log in"); //确认登录按钮
+	private JButton jbtSignUpButton=new JButton("Sign up"); //注册按钮
 	
 	public LogIn(Client client,Socket socket,ObjectInputStream objfromServer,ObjectOutputStream objtoServer){
 		this.client=client;
@@ -55,23 +55,8 @@ public class LogIn extends JFrame{
 		setLogInGui();
 		registerlogInListener();
 	}
-	
+	//画界面
 	public void setLogInGui(){
-		/*
-		JPanel p1=new JPanel();
-		p1.setLayout(new FlowLayout());
-		p1.add(new JLabel("Enter Your Name"));
-		p1.add(jtfNameField);
-		
-		JPanel p2=new JPanel();
-		p2.setLayout(new FlowLayout());
-		p2.add(new JLabel("Enter Your Password"));
-		p2.add(jtfPassWordField);
-		
-		JPanel p3=new JPanel();
-		p3.setLayout(new GridLayout(1,2));
-		p3.add(jbtLogInButton);
-		p3.add(jbtSignUpButton);*/
 		
 		JLabel jlb1=new JLabel("Name");
 		jlb1.setBounds(100, 50, 100, 50);
@@ -99,12 +84,12 @@ public class LogIn extends JFrame{
 		//将窗口置于屏幕中央
 		setLocationRelativeTo(null); 
 	}
-	
+	//注册监听器
 	public void registerlogInListener(){
 		jbtLogInButton.addActionListener(new LogInListener());
 		jbtSignUpButton.addActionListener(new SignUpListener());
 	}
-	
+	//监听登录事件
 	private class LogInListener implements ActionListener{
 
 		@Override
@@ -146,7 +131,7 @@ public class LogIn extends JFrame{
 		}
 		
 	}
-	
+	//监听注册事件
 	private class SignUpListener implements ActionListener{
 
 		@Override

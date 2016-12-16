@@ -1,12 +1,12 @@
 package Message;
 
 import java.io.Serializable;
-
+//搜索单词消息
 public class WordSearchMessage implements Serializable{
-	private String word;
-	private boolean isBaiduChosen=false;
-	private boolean isYoudaoChosen=false;
-	private boolean isBingChosen=false;
+	private String word;//要搜索的单词
+	private boolean isBaiduChosen=false;//百度是否被选择
+	private boolean isYoudaoChosen=false;//有道是否被选择
+	private boolean isBingChosen=false;//必应是否被选择
 	
 	public WordSearchMessage(String word) {
 		// TODO Auto-generated constructor stub

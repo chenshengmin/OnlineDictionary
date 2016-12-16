@@ -8,7 +8,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 import javax.swing.*;
-
+//单词卡生成类
 public class WordCard extends JFrame{
 	private String message;
 	private String[] messageLines=null;
@@ -21,7 +21,7 @@ public class WordCard extends JFrame{
 	public static void main(String[] args){
 		new WordCard(":-D\n/(ㄒoㄒ)/~~\no(>﹏<)o\n( ⊙ o ⊙ )\nO(∩_∩)O~~\nWord\n但此次fffffffffffffffffffff此次", Color.ORANGE, Color.LIGHT_GRAY,new Font("宋体",Font.BOLD+Font.ITALIC,60), "silver bear");
     }
-	
+	//自动调整内容居中
 	public void adjustSize(){
 		
 		messageLines=message.split("\n");
@@ -56,7 +56,7 @@ public class WordCard extends JFrame{
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
-	
+	//画图形
 	class MyMessagePanel extends JPanel{
 		protected void paintComponent(Graphics g){		          
 			super.paintComponent(g);
